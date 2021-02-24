@@ -116,5 +116,24 @@ namespace PythonCoreConcept.Parser.AST
     public record CompareNotIn(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol1, Token Symbol2, ExpressionNode Right) 
         : ExpressionNode(StartPos, EndPos);
     
+    public record NotTest(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record AndTest(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record OrTest(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Lambda(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Test(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol1, ExpressionNode Right, Token Symbol2, ExpressionNode Next) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record NamedExpr(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    
     public record StatementNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
 }
