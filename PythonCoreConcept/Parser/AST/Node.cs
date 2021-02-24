@@ -38,5 +38,14 @@ namespace PythonCoreConcept.Parser.AST
     public record Power(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
         : ExpressionNode(StartPos, EndPos);
     
+    public record UnaryPlus(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record UnaryMinus(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record UnaryBitInvert(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
     public record StatementNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
 }
