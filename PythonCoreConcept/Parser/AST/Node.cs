@@ -32,5 +32,11 @@ namespace PythonCoreConcept.Parser.AST
     public record AtomSet(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Right, Token Symbol2) 
         : ExpressionNode(StartPos, EndPos);
     
+    public record AtomExpr(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Left, ExpressionNode[] Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Power(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
     public record StatementNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
 }
