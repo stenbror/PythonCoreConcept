@@ -47,5 +47,20 @@ namespace PythonCoreConcept.Parser.AST
     public record UnaryBitInvert(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) 
         : ExpressionNode(StartPos, EndPos);
     
+    public record Mul(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Div(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record FloorDiv(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Modulo(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Matrice(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
     public record StatementNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
 }
