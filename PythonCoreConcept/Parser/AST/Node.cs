@@ -374,4 +374,15 @@ namespace PythonCoreConcept.Parser.AST
     public record VfpDefAssignStatement(UInt32 StartPos, UInt32 EndPos, 
             StatementNode Left, Token Symbol, ExpressionNode Right) 
         : ExpressionNode(StartPos, EndPos);
+
+    public record TypeNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
+    
+    public record TypeInput(UInt32 StartPos, UInt32 EndPos, TypeNode Right, Token[] Newlines, Token Eof) : TypeNode(StartPos, EndPos);
+    
+    public record FuncType(UInt32 StartPos, UInt32 EndPos, Token Symbol1, TypeNode Left, Token Symbol2, Token Symbol3, ExpressionNode Right) : 
+        TypeNode(StartPos, EndPos);
+    
+    public record TypeList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators, 
+            Token Mul, ExpressionNode MulNode, Token Power, ExpressionNode PowerNode) 
+        : TypeNode(StartPos, EndPos);
 }
