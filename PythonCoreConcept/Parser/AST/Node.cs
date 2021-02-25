@@ -233,6 +233,9 @@ namespace PythonCoreConcept.Parser.AST
             StatementNode Right) 
         : Node(StartPos, EndPos);
     
+    public record WithItemStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
     public record SuiteStatement(UInt32 StartPos, UInt32 EndPos,
             Token Symbol1, Token Symbol2, StatementNode[] Nodes, Token Symbol3) 
         : Node(StartPos, EndPos);
