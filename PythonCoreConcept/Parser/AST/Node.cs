@@ -295,4 +295,40 @@ namespace PythonCoreConcept.Parser.AST
     
     public record TestListStarExprStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
         : Node(StartPos, EndPos);
+    
+    public record DelStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) : Node(StartPos, EndPos);
+    
+    public record PassStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol) : Node(StartPos, EndPos);
+    
+    public record BreakStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol) : Node(StartPos, EndPos);
+    
+    public record ContinueStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol) : Node(StartPos, EndPos);
+    
+    public record ReturnStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol, StatementNode Right) : Node(StartPos, EndPos);
+    
+    public record YieldStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode Right) : Node(StartPos, EndPos);
+    
+    public record RaiseStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right) : Node(StartPos, EndPos);
+    
+    public record ImportNameStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol, StatementNode Right) : Node(StartPos, EndPos);
+    
+    public record ImportFromStatement(UInt32 StartPos, UInt32 EndPos, 
+        Token Symbol1, Token[] Dots, StatementNode Left, Token Symbol2, Token Symbol3, StatementNode Right, Token Symbol4) 
+        : Node(StartPos, EndPos);
+    
+    public record ImportAsNameStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol1, Token Symbol2, Token Symbol3) : Node(StartPos, EndPos);
+    
+    public record DottedAsNameStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol1, Token Symbol2) : Node(StartPos, EndPos);
+    
+    public record ImportAsNamesStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators ) : Node(StartPos, EndPos);
+    
+    public record DottedAsNamesStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) : Node(StartPos, EndPos);
+    
+    public record DottedNameStatement(UInt32 StartPos, UInt32 EndPos, Token[] Nodes, Token[] Separators) : Node(StartPos, EndPos);
+    
+    public record GlobalStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol, Token[] Nodes, Token[] Separators) : Node(StartPos, EndPos);
+    
+    public record NonlocalStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol, Token[] Nodes, Token[] Separators) : Node(StartPos, EndPos);
+    
+    public record AssertStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right) : Node(StartPos, EndPos);
 }
