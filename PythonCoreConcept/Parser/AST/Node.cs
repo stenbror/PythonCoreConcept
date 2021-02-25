@@ -385,4 +385,10 @@ namespace PythonCoreConcept.Parser.AST
     public record TypeList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators, 
             Token Mul, ExpressionNode MulNode, Token Power, ExpressionNode PowerNode) 
         : TypeNode(StartPos, EndPos);
+
+    public record SingleInputNode(UInt32 StartPos, UInt32 EndPos, Token Newline, StatementNode Right) : StatementNode(StartPos, EndPos);
+    
+    public record FileInputNode(UInt32 StartPos, UInt32 EndPos, Token[] Newlines, StatementNode[] Nodes, Token Eof) : StatementNode(StartPos, EndPos);
+    
+    public record EvalInputNode(UInt32 StartPos, UInt32 EndPos, ExpressionNode Right, Token[] Newlines, Token Eof) : StatementNode(StartPos, EndPos);
 }
