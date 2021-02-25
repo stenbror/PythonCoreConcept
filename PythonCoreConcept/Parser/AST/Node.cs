@@ -286,4 +286,13 @@ namespace PythonCoreConcept.Parser.AST
     
     public record FloorDivAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
         : Node(StartPos, EndPos);
+    
+    public record AnnAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol1, ExpressionNode Right, Token Symbol2, Node Next) 
+        : Node(StartPos, EndPos);
+    
+    public record AssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token[] Symbols, Node[] RightNodes, Token Symbol) 
+        : Node(StartPos, EndPos);
+    
+    public record TestListStarExprStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
+        : Node(StartPos, EndPos);
 }
