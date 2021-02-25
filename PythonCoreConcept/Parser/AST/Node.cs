@@ -196,4 +196,44 @@ namespace PythonCoreConcept.Parser.AST
         : ExpressionNode(StartPos, EndPos);
     
     public record StatementNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
+    
+    public record IfStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right,
+            StatementNode[] Nodes, StatementNode Next) 
+        : Node(StartPos, EndPos);
+    
+    public record ElifStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record ElseStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol1, Token Symbol2, StatementNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record WhileStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, ExpressionNode Left, Token Symbol2, StatementNode Right, StatementNode Next) 
+        : Node(StartPos, EndPos);
+    
+    public record ForStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right, Token Symbol3, Token Symbol4,
+            StatementNode Next, StatementNode Extra) 
+        : Node(StartPos, EndPos);
+    
+    public record TryStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, Token Symbol2, StatementNode Left,
+            StatementNode[] ExceptNodes, StatementNode ElseNode, 
+            Token Symbol3, Token Symbol4, StatementNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record ExceptStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, ExpressionNode Left, Token Symbol2, Token Symbol3) 
+        : Node(StartPos, EndPos);
+    
+    public record WithStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, StatementNode[] WithItems, Token[] Separators, Token Symbol2, Token Symbol3,
+            StatementNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record SuiteStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, Token Symbol2, StatementNode[] Nodes, Token Symbol3) 
+        : Node(StartPos, EndPos);
 }
