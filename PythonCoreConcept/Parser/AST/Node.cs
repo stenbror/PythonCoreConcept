@@ -134,6 +134,66 @@ namespace PythonCoreConcept.Parser.AST
     public record NamedExpr(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
         : ExpressionNode(StartPos, EndPos);
     
+    public record TestListComp(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Call(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Right, Token Symbol2) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Index(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Right, Token Symbol2) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record DotName(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record SubscriptList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Subscript(UInt32 StartPos, UInt32 EndPos,
+            ExpressionNode First, Token Symbol1, ExpressionNode Two, Token Symbol2, ExpressionNode Three) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record ExprList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record TestList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record DictionaryContainer(UInt32 StartPos, UInt32 EndPos,
+            ExpressionNode[] Entries, Token[] Separators,
+            Token PowerSymbol, ExpressionNode PowerNode) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record DictionaryEntry(UInt32 StartPos, UInt32 EndPos, 
+            ExpressionNode Key, Token Symbol, ExpressionNode Value) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record SetContainer(UInt32 StartPos, UInt32 EndPos, 
+            ExpressionNode[] Nodes, Token[] Separators,
+            Token MulSymbol, ExpressionNode MulNode) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record ArgList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record Argument(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record SyncCompFor(UInt32 StartPos, UInt32 EndPos, 
+            Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right, ExpressionNode Next) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record CompFor(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record CompIf(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Right, ExpressionNode Next) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record YieldFrom(UInt32 StartPos, UInt32 EndPos, Token Symbol1, Token Symbol2, ExpressionNode Right) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record YieldExpr(UInt32 StartPos, UInt32 EndPos, Token Symbol1, Node Right) 
+        : ExpressionNode(StartPos, EndPos);
     
     public record StatementNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
 }
