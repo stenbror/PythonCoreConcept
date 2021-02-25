@@ -359,12 +359,19 @@ namespace PythonCoreConcept.Parser.AST
         StatementNode[] Nodes, Token[] Separators, Token Slash, Token Mul, ExpressionNode MulNode, Token Power, ExpressionNode PowerNode, Token TypeComment) 
         : StatementNode(StartPos, EndPos);
    
+    public record TfpDefStatement(UInt32 StartPos, UInt32 EndPos, 
+            Token Symbol1, Token Symbol2, ExpressionNode Right) 
+        : StatementNode(StartPos, EndPos);
     
-    
-    
-    
+    public record TfpDefAssignStatement(UInt32 StartPos, UInt32 EndPos, 
+            StatementNode Left, Token Symbol, ExpressionNode Right) 
+        : StatementNode(StartPos, EndPos);
     
     public record VarArgsListStatement(UInt32 StartPos, UInt32 EndPos, 
             StatementNode[] Nodes, Token[] Separators, Token Slash, Token Mul, ExpressionNode MulNode, Token Power, ExpressionNode PowerNode, Token TypeComment) 
+        : ExpressionNode(StartPos, EndPos);
+    
+    public record VfpDefAssignStatement(UInt32 StartPos, UInt32 EndPos, 
+            StatementNode Left, Token Symbol, ExpressionNode Right) 
         : ExpressionNode(StartPos, EndPos);
 }
