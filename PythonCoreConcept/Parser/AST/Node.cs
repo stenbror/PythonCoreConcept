@@ -1,3 +1,8 @@
+
+// PythonCore - All of Abstract Syntax Tree nodes.
+// Written by Richard Magnor Stenbro. (C) 2021 By Richard Magnor Stenbro
+// Free to use for none commercial uses.
+
 using System;
 
 namespace PythonCoreConcept.Parser.AST
@@ -238,5 +243,47 @@ namespace PythonCoreConcept.Parser.AST
     
     public record SuiteStatement(UInt32 StartPos, UInt32 EndPos,
             Token Symbol1, Token Symbol2, StatementNode[] Nodes, Token Symbol3) 
+        : Node(StartPos, EndPos);
+    
+    public record SimpleStatement(UInt32 StartPos, UInt32 EndPos, StatementNode[] Nodes, Token Separators, Token Symbol) 
+        : Node(StartPos, EndPos);
+    
+    public record PlusAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record MinusAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record MulAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record MatriceAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record DivAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record ModuloAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record BitAndAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record BitOrAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record BitXorAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record ShiftLeftAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record ShiftRightAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record PowerAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
+        : Node(StartPos, EndPos);
+    
+    public record FloorDivAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 
         : Node(StartPos, EndPos);
 }
