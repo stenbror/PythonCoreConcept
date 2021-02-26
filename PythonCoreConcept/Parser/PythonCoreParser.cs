@@ -101,6 +101,44 @@ namespace PythonCoreConcept.Parser
             return new AtomExpr(startPos, _lexer.Position, null, nodePlain, trailingPlain.ToArray());
         }
 
+        private ExpressionNode ParsePower()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseAtomExpr();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseFactor();
+
+                return new Power(startPos, _lexer.Position, left, symbol, right);
+            }
+
+            return left;
+        }
+
+        private ExpressionNode ParseFactor()
+        {
+            var startPos = _lexer.Position;
+            var curSymbol = _lexer.CurSymbol;
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyPlus:
+                    _lexer.Advance();
+                    var rightPlus = ParseFactor();
+                    return new UnaryPlus(startPos, _lexer.Position, curSymbol, rightPlus);
+                case TokenKind.PyMinus:
+                    _lexer.Advance();
+                    var rightMinus = ParseFactor();
+                    return new UnaryMinus(startPos, _lexer.Position, curSymbol, rightMinus);
+                case TokenKind.PyBitInvert:
+                    _lexer.Advance();
+                    var rightInvert = ParseFactor();
+                    return new UnaryBitInvert(startPos, _lexer.Position, curSymbol, rightInvert);
+                default:
+                    return ParsePower();
+            }
+        }
 
 
 
