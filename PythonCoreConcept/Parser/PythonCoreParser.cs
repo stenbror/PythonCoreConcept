@@ -402,9 +402,64 @@ namespace PythonCoreConcept.Parser
             return left;
         }
 
+        private ExpressionNode ParseLambda(bool isConditional)
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            ExpressionNode left = null;
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+            {
+                left = ParseVarArgsList();
+            }
+
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in lambda expression!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = isConditional ? ParseTest() : ParseTestNoCond();
+
+            return new Lambda(startPos, _lexer.Position, symbol, left, symbol2, right);
+        }
+
+        private ExpressionNode ParseTestNoCond()
+        {
+            if (_lexer.CurSymbol.Kind == TokenKind.PyLambda) return ParseLambda(false);
+            return ParseOrTest();
+        }
+
+        private ExpressionNode ParseTest()
+        {
+            if (_lexer.CurSymbol.Kind == TokenKind.PyLambda) return ParseLambda(true);
+            
+            var startPos = _lexer.Position;
+            var left = ParseOrTest();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyIf)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseOrTest();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyElse) throw new SyntaxError(_lexer.Position, "Missing 'else' in test expression!", _lexer.CurSymbol);
+                var symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                var next = ParseTest();
+                return new Test(startPos, _lexer.Position, left, symbol, right, symbol2, next);
+            }
+
+            return left;
+        }
+
 
 
         private ExpressionNode ParseTrailer()
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+        private ExpressionNode ParseVarArgsList()
         {
             throw new NotImplementedException();
         }
