@@ -238,6 +238,21 @@ namespace PythonCoreConcept.Parser
 
             return left;
         }
+        
+        private ExpressionNode ParseXor()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseAnd();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyBitXor)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseAnd();
+                left = new BitXor(startPos, _lexer.Position, left, symbol, right);
+            }
+
+            return left;
+        }
 
 
 
