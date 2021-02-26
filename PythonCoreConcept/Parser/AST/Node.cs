@@ -148,7 +148,7 @@ namespace PythonCoreConcept.Parser.AST
     public record Index(UInt32 StartPos, UInt32 EndPos, Token Symbol1, ExpressionNode Right, Token Symbol2) 
         : ExpressionNode(StartPos, EndPos);
     
-    public record DotName(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right) 
+    public record DotName(UInt32 StartPos, UInt32 EndPos, Token Symbol, NameToken Symbol2) 
         : ExpressionNode(StartPos, EndPos);
     
     public record SubscriptList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 

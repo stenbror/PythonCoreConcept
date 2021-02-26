@@ -498,10 +498,95 @@ namespace PythonCoreConcept.Parser
 
         private ExpressionNode ParseTrailer()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (symbol.Kind == TokenKind.PyLeftParen)
+            {
+                ExpressionNode right = null;
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                {
+                    right = ParseArgList();
+                }
+
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen) throw new SyntaxError(_lexer.Position, "Expecting ')' in call!", _lexer.CurSymbol);
+                var symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                
+                return new Call(startPos, _lexer.Position, symbol, right, symbol2);
+            }
+            else if (symbol.Kind == TokenKind.PyLeftBracket)
+            {
+                ExpressionNode right = null;
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket)
+                {
+                    right = ParseSubscriptList();
+                }
+
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket) throw new SyntaxError(_lexer.Position, "Expecting ']' in index!", _lexer.CurSymbol);
+                var symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                
+                return new AST.Index(startPos, _lexer.Position, symbol, right, symbol2);
+            }
+            else
+            {
+                if (_lexer.CurSymbol.Kind != TokenKind.Name) throw new SyntaxError(_lexer.Position, "Expecting NAME literal after '.'!", _lexer.CurSymbol);
+                var symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+
+                return new DotName(startPos, _lexer.Position, symbol, symbol2 as NameToken);
+            }
+        }
+
+        private ExpressionNode ParseSubscriptList()
+        {
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add( ParseSubscript() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add( _lexer.CurSymbol );
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyRightBracket) break;
+                nodes.Add( ParseSubscript() );
+            }
+
+            return new SubscriptList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
+        }
+
+        private ExpressionNode ParseSubscript()
+        {
+            var startPos = _lexer.Position;
+            ExpressionNode first = null, second = null, third = null;
+            Token one = null, two = null;
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon) first = ParseTest();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyColon)
+            {
+                one = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyColon && _lexer.CurSymbol.Kind != TokenKind.PyRightBracket)
+                {
+                    second = ParseTest();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyColon)
+                    {
+                        two = _lexer.CurSymbol;
+                        if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket) third = ParseTest();
+                    }
+                }
+            }
+
+            return new Subscript(startPos, _lexer.Position, first, one,second, two, third);
         }
 
 
+
+
+        private ExpressionNode ParseArgList()
+        {
+            throw new NotImplementedException();
+        }
 
 
         private ExpressionNode ParseCompFor()
