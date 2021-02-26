@@ -357,6 +357,21 @@ namespace PythonCoreConcept.Parser
             return left;
         }
 
+        [SuppressMessage("Resharper", "RecursiveCall.Global")]
+        private ExpressionNode ParseNotTest()
+        {
+            if (_lexer.CurSymbol.Kind == TokenKind.PyNot)
+            {
+                var startPos = _lexer.Position;
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseNotTest();
+                return new NotTest(startPos, _lexer.Position, symbol, right);
+            }
+
+            return ParseComparison();
+        }
+
 
 
         private ExpressionNode ParseTrailer()
