@@ -200,6 +200,29 @@ namespace PythonCoreConcept.Parser
 
             return left;
         }
+        
+        private ExpressionNode ParseShift()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseArith();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyShiftLeft || _lexer.CurSymbol.Kind == TokenKind.PyShiftRight)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseArith();
+                switch (symbol.Kind)
+                {
+                    case TokenKind.PyShiftLeft:
+                        left = new ShiftLeft(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                    case TokenKind.PyShiftRight:
+                        left = new ShiftRight(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                }
+            }
+
+            return left;
+        }
 
 
 
