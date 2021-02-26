@@ -177,6 +177,29 @@ namespace PythonCoreConcept.Parser
 
             return left;
         }
+        
+        private ExpressionNode ParseArith()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseTerm();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyPlus || _lexer.CurSymbol.Kind == TokenKind.PyMinus)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTerm();
+                switch (symbol.Kind)
+                {
+                    case TokenKind.PyPlus:
+                        left = new Plus(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                    case TokenKind.PyMinus:
+                        left = new Minus(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                }
+            }
+
+            return left;
+        }
 
 
 
@@ -187,5 +210,6 @@ namespace PythonCoreConcept.Parser
         
         
 #endregion
+
     }
 }
