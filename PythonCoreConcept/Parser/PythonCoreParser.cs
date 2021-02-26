@@ -269,6 +269,15 @@ namespace PythonCoreConcept.Parser
             return left;
         }
 
+        private ExpressionNode ParseStarExpr()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseOr();
+            return new StarExpr(startPos, _lexer.Position, symbol, right);
+        }
+
 
 
         private ExpressionNode ParseTrailer()
