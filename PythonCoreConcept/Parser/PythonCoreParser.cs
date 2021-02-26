@@ -278,6 +278,85 @@ namespace PythonCoreConcept.Parser
             return new StarExpr(startPos, _lexer.Position, symbol, right);
         }
 
+        private ExpressionNode ParseComparison()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseOr();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyLess
+                   || _lexer.CurSymbol.Kind == TokenKind.PyLessEqual
+                   || _lexer.CurSymbol.Kind == TokenKind.PyEqual
+                   || _lexer.CurSymbol.Kind == TokenKind.PyGreater
+                   || _lexer.CurSymbol.Kind == TokenKind.PyGreaterEqual
+                   || _lexer.CurSymbol.Kind == TokenKind.PyNotEqual
+                   || _lexer.CurSymbol.Kind == TokenKind.PyIn
+                   || _lexer.CurSymbol.Kind == TokenKind.PyNot
+                   || _lexer.CurSymbol.Kind == TokenKind.PyIs)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (symbol.Kind == TokenKind.PyNot)
+                {
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyIn)
+                    {
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        var right = ParseOr();
+                        left = new CompareNotIn(startPos, _lexer.Position, left, symbol, symbol2, right);
+                    }
+                    else
+                    {
+                        throw new SyntaxError(_lexer.Position, "Expecting 'not in', but missing 'in'!", _lexer.CurSymbol);
+                    }
+                }
+                else if (symbol.Kind == TokenKind.PyIs)
+                {
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyNot)
+                    {
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        var right = ParseOr();
+                        left = new CompareIsNot(startPos, _lexer.Position, left, symbol, symbol2, right);
+                    }
+                    else
+                    {
+                        var right = ParseOr();
+                        left = new CompareIs(startPos, _lexer.Position, left, symbol, right);
+                    }
+                    
+                }
+                else
+                {
+                    var right = ParseOr();
+                    switch (symbol.Kind)
+                    {
+                        case TokenKind.PyLess:
+                            left = new CompareLess(startPos, _lexer.Position, left, symbol, right);
+                            break;
+                        case TokenKind.PyLessEqual:
+                            left = new CompareLessEqual(startPos, _lexer.Position, left, symbol, right);
+                            break;
+                        case TokenKind.PyEqual:
+                            left = new CompareEqual(startPos, _lexer.Position, left, symbol, right);
+                            break;
+                        case TokenKind.PyGreater:
+                            left = new CompareGreater(startPos, _lexer.Position, left, symbol, right);
+                            break;
+                        case TokenKind.PyGreaterEqual:
+                            left = new CompareGreaterEqual(startPos, _lexer.Position, left, symbol, right);
+                            break;
+                        case TokenKind.PyNotEqual:
+                            left = new CompareNotEqual(startPos, _lexer.Position, left, symbol, right);
+                            break;
+                        case TokenKind.PyIn:
+                            left = new CompareIn(startPos, _lexer.Position, left, symbol, right);
+                            break;
+                    }
+                }
+            }
+
+            return left;
+        }
+
 
 
         private ExpressionNode ParseTrailer()
