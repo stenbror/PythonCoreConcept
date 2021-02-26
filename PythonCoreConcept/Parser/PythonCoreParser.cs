@@ -449,6 +449,22 @@ namespace PythonCoreConcept.Parser
             return left;
         }
 
+        private ExpressionNode ParseNamedExpr()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseTest();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyColonAssign)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTest();
+
+                return new NamedExpr(startPos, _lexer.Position, left, symbol, right);
+            }
+
+            return left;
+        }
+
 
 
         private ExpressionNode ParseTrailer()
