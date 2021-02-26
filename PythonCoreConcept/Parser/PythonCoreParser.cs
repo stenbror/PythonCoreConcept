@@ -465,7 +465,36 @@ namespace PythonCoreConcept.Parser
             return left;
         }
 
+        private ExpressionNode ParseTestListComp()
+        {
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseNamedExpr() );
+            if (_lexer.CurSymbol.Kind == TokenKind.PyFor)
+            {
+                nodes.Add( ParseCompFor());
+            }
+            else
+            {
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add( _lexer.CurSymbol );
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen &&
+                        _lexer.CurSymbol.Kind != TokenKind.PyRightBracket)
+                    {
+                        nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseNamedExpr() );
+                    }
+                    else if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                    {
+                        throw new SyntaxError(_lexer.Position, "Missing element in list!", _lexer.CurSymbol);
+                    }
+                }
+            }
 
+            return new TestListComp(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
+        }
 
         private ExpressionNode ParseTrailer()
         {
@@ -474,6 +503,11 @@ namespace PythonCoreConcept.Parser
 
 
 
+
+        private ExpressionNode ParseCompFor()
+        {
+            throw new NotImplementedException();
+        }
 
         private ExpressionNode ParseVarArgsList()
         {
