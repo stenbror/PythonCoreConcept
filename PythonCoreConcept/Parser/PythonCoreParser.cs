@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using PythonCoreConcept.Parser.AST;
 
 namespace PythonCoreConcept.Parser
@@ -117,6 +118,7 @@ namespace PythonCoreConcept.Parser
             return left;
         }
 
+        [SuppressMessage("Resharper", "RecursiveCall.Global")]
         private ExpressionNode ParseFactor()
         {
             var startPos = _lexer.Position;
@@ -138,6 +140,42 @@ namespace PythonCoreConcept.Parser
                 default:
                     return ParsePower();
             }
+        }
+
+        private ExpressionNode ParseTerm()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseFactor();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyMul
+                || _lexer.CurSymbol.Kind == TokenKind.PyMatrice
+                || _lexer.CurSymbol.Kind == TokenKind.PyDiv
+                || _lexer.CurSymbol.Kind == TokenKind.PyModulo
+                || _lexer.CurSymbol.Kind == TokenKind.PyFloorDiv)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseFactor();
+                switch (symbol.Kind)
+                {
+                    case TokenKind.PyMul:
+                        left = new Mul(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                    case TokenKind.PyMatrice:
+                        left = new Matrice(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                    case TokenKind.PyDiv:
+                        left = new Div(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                    case TokenKind.PyModulo:
+                        left = new Modulo(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                    case TokenKind.PyFloorDiv:
+                        left = new FloorDiv(startPos, _lexer.Position, left, symbol, right);
+                        break;
+                }
+            }
+
+            return left;
         }
 
 
