@@ -12,12 +12,10 @@ namespace PythonCoreConcept.Parser
     public class PythonCoreParser
     {
         private PythonCoreTokenizer _lexer;
-        private UInt16 _tabSize;
-
-        public PythonCoreParser(PythonCoreTokenizer tokenizer, UInt16 tabSize)
+        
+        public PythonCoreParser(PythonCoreTokenizer tokenizer)
         {
             _lexer = tokenizer;
-            _tabSize = tabSize;
             
             _lexer.Advance();
         }
@@ -28,7 +26,7 @@ namespace PythonCoreConcept.Parser
 
 #region Expression rules
 
-        public ExpressionNode ParseAtom()
+        private ExpressionNode ParseAtom()
         {
             var startPos = _lexer.Position;
             var curSymbol = _lexer.CurSymbol;
@@ -71,6 +69,44 @@ namespace PythonCoreConcept.Parser
                 default:
                     throw new SyntaxError(_lexer.Position, "Illegal literal!", curSymbol);
             }
+        }
+
+        private ExpressionNode ParseAtomExpr()
+        {
+            var startPos = _lexer.Position;
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAwait)
+            {
+                var awaitNode = _lexer.CurSymbol;
+                _lexer.Advance();
+                var node = ParseAtom();
+                var trailing = new List<ExpressionNode>();
+                while (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen
+                       || _lexer.CurSymbol.Kind == TokenKind.PyLeftBracket
+                       || _lexer.CurSymbol.Kind == TokenKind.PyDot)
+                {
+                    trailing.Add(ParseTrailer());
+                }
+
+                return new AtomExpr(startPos, _lexer.Position, awaitNode, node, trailing.ToArray());
+            }
+            var nodePlain = ParseAtom();
+            var trailingPlain = new List<ExpressionNode>();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen
+                   || _lexer.CurSymbol.Kind == TokenKind.PyLeftBracket
+                   || _lexer.CurSymbol.Kind == TokenKind.PyDot)
+            {
+                trailingPlain.Add(ParseTrailer());
+            }
+
+            return new AtomExpr(startPos, _lexer.Position, null, nodePlain, trailingPlain.ToArray());
+        }
+
+
+
+
+        private ExpressionNode ParseTrailer()
+        {
+            throw new NotImplementedException();
         }
         
         
