@@ -372,6 +372,21 @@ namespace PythonCoreConcept.Parser
             return ParseComparison();
         }
 
+        private ExpressionNode ParseAndTest()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseNotTest();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyAnd)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseNotTest();
+                left = new AndTest(startPos, _lexer.Position, left, symbol, right);
+            }
+
+            return left;
+        }
+
 
 
         private ExpressionNode ParseTrailer()
