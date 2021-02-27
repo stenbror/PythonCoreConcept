@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.WebSockets;
+using System.Security;
 using PythonCoreConcept.Parser.AST;
 
 namespace PythonCoreConcept.Parser
@@ -1107,7 +1108,89 @@ namespace PythonCoreConcept.Parser
 
 #region Statement rules
 
+        private StatementNode ParseCompound()
+        {
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyIf:
+                    return ParseIf();
+                case TokenKind.PyWhile:
+                    return ParseWhile();
+                case TokenKind.PyFor:
+                    return ParseFor();
+                case TokenKind.PyTry:
+                    return ParseTry();
+                case TokenKind.PyWith:
+                    return ParseWith();
+                case TokenKind.PyDef:
+                    return ParseFuncDef();
+                case TokenKind.PyClass:
+                    return ParseClass();
+                case TokenKind.PyMatrice:
+                    return ParseDecorated();
+                case TokenKind.PyAsync:
+                    return ParseAsync();
+                default:
+                    throw new SyntaxError(_lexer.Position, "Illegal statement!", _lexer.CurSymbol);
+            }
+        }
+
+        private StatementNode ParseIf()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseElif()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseElse()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseWhile()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseFor()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseWith()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseTry()
+        {
+            throw new NotImplementedException();
+        }
+
         private StatementNode ParseTestListStarExpr()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseDecorated()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseFuncDef()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseClass()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseAsync()
         {
             throw new NotImplementedException();
         }
