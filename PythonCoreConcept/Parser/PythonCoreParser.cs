@@ -1185,7 +1185,23 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseWhile()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseNamedExpr();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'while' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseSuite();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyElse)
+            {
+                var next = ParseElse();
+
+                return new WhileStatement(startPos, _lexer.Position, symbol, left, symbol2, right, next);
+            }
+            
+            return new WhileStatement(startPos, _lexer.Position, symbol, left, symbol2, right, null);
         }
         
         private StatementNode ParseFor()
@@ -1199,11 +1215,6 @@ namespace PythonCoreConcept.Parser
         }
         
         private StatementNode ParseTry()
-        {
-            throw new NotImplementedException();
-        }
-
-        private StatementNode ParseTestListStarExpr()
         {
             throw new NotImplementedException();
         }
@@ -1248,6 +1259,14 @@ namespace PythonCoreConcept.Parser
             }
 
             throw new SyntaxError(_lexer.Position, "Expecting 'def', 'with' or 'for' after 'async' statement!", _lexer.CurSymbol);
+        }
+        
+        
+        
+        
+        private StatementNode ParseTestListStarExpr()
+        {
+            throw new NotImplementedException();
         }
 
 
