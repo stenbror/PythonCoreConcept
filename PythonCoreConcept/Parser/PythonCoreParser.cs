@@ -1206,7 +1206,35 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseFor()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseExprList();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyIn)
+                throw new SyntaxError(_lexer.Position, "Missing 'in' in 'for' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseTestList();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'for' statement!", _lexer.CurSymbol);
+            var symbol3 = _lexer.CurSymbol;
+            _lexer.Advance();
+            Token tc = null;
+            if (_lexer.CurSymbol.Kind == TokenKind.TypeComment)
+            {
+                tc = _lexer.CurSymbol;
+                _lexer.Advance();
+            }
+
+            var next = ParseSuite();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyElse)
+            {
+                var node = ParseElse();
+
+                return new ForStatement(startPos, _lexer.Position, symbol, left, symbol2, right, symbol3, tc, next, node);
+            }
+            
+            return new ForStatement(startPos, _lexer.Position, symbol, left, symbol2, right, symbol3, tc, next, null);
         }
         
         private StatementNode ParseWith()
