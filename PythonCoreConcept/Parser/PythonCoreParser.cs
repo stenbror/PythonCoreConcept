@@ -1137,17 +1137,50 @@ namespace PythonCoreConcept.Parser
 
         private StatementNode ParseIf()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            var nodes = new List<StatementNode>();
+            StatementNode node = null;
+            _lexer.Advance();
+            var left = ParseNamedExpr();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'if' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseSuite();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyElif) nodes.Add( ParseElif() );
+            if (_lexer.CurSymbol.Kind == TokenKind.PyElse) node = ParseElse();
+
+            return new IfStatement(startPos, _lexer.Position, symbol, left, symbol2, right, nodes.ToArray(), node);
         }
         
         private StatementNode ParseElif()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseNamedExpr();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'elif' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseSuite();
+
+            return new ElifStatement(startPos, _lexer.Position, symbol, left, symbol2, right);
         }
         
         private StatementNode ParseElse()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'else' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseSuite();
+
+            return new ElseStatement(startPos, _lexer.Position, symbol, symbol2, right);
         }
         
         private StatementNode ParseWhile()
@@ -1186,6 +1219,11 @@ namespace PythonCoreConcept.Parser
         }
         
         private StatementNode ParseClass()
+        {
+            throw new NotImplementedException();
+        }
+
+        private StatementNode ParseSuite()
         {
             throw new NotImplementedException();
         }

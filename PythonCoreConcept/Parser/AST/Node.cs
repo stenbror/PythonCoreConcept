@@ -204,12 +204,12 @@ namespace PythonCoreConcept.Parser.AST
     public record StatementNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);
     
     public record IfStatement(UInt32 StartPos, UInt32 EndPos,
-            Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right,
+            Token Symbol1, ExpressionNode Left, Token Symbol2, StatementNode Right,
             StatementNode[] Nodes, StatementNode Next) 
         : StatementNode(StartPos, EndPos);
     
     public record ElifStatement(UInt32 StartPos, UInt32 EndPos,
-            Token Symbol1, ExpressionNode Left, Token Symbol2, ExpressionNode Right) 
+            Token Symbol1, ExpressionNode Left, Token Symbol2, StatementNode Right) 
         : StatementNode(StartPos, EndPos);
     
     public record ElseStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol1, Token Symbol2, StatementNode Right) 
