@@ -6,9 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.WebSockets;
-using System.Runtime.Serialization.Json;
-using System.Security;
 using PythonCoreConcept.Parser.AST;
 
 namespace PythonCoreConcept.Parser
@@ -23,11 +20,7 @@ namespace PythonCoreConcept.Parser
             
             _lexer.Advance();
         }
-
-
-
-
-
+        
 #region Expression rules
 
         private ExpressionNode ParseAtom()
