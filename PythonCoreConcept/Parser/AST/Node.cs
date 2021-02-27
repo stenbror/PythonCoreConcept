@@ -342,7 +342,7 @@ namespace PythonCoreConcept.Parser.AST
         : StatementNode(StartPos, EndPos);
     
     public record ClassStatement(UInt32 StartPos, UInt32 EndPos, 
-        Token Symbol1, Token Symbol2, Token Symbol3, ExpressionNode Left, Token Symbol4, Token Symbol5, StatementNode Right) : StatementNode(StartPos, EndPos);
+        Token Symbol1, NameToken Symbol2, Token Symbol3, ExpressionNode Left, Token Symbol4, Token Symbol5, StatementNode Right) : StatementNode(StartPos, EndPos);
     
     public record AsyncStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol, StatementNode Right) : StatementNode(StartPos, EndPos);
     

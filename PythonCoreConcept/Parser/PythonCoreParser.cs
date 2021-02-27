@@ -1432,7 +1432,14 @@ namespace PythonCoreConcept.Parser
 
         private StatementNode ParseAsyncFuncDef()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyDef)
+                throw new SyntaxError(_lexer.Position, "Expecting 'def' after 'async'", _lexer.CurSymbol);
+            var right = ParseFuncDef();
+
+            return new AsyncStatement(startPos, _lexer.Position, symbol, right);
         }
         
         private StatementNode ParseFuncDef()
@@ -1442,7 +1449,32 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseClass()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Expecting Name of class statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            Token symbol3 = null, symbol4 = null;
+            ExpressionNode left = null;
+            if (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen)
+            {
+                symbol3 = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen) left = ParseArgList();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                    throw new SyntaxError(_lexer.Position, "Expecting ')' in class statement!", _lexer.CurSymbol);
+                symbol4 = _lexer.CurSymbol;
+                _lexer.Advance();
+            }
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Expecting ':' in class statement!", _lexer.CurSymbol);
+            var symbol5 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseSuite();
+
+            return new ClassStatement(startPos, _lexer.Position, symbol, symbol2 as NameToken, symbol3, left, symbol4, symbol5, right);
         }
 
         private StatementNode ParseSuite()
