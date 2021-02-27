@@ -580,18 +580,97 @@ namespace PythonCoreConcept.Parser
             return new Subscript(startPos, _lexer.Position, first, one,second, two, third);
         }
 
+        private ExpressionNode ParseExprList()
+        {
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseOr() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add( _lexer.CurSymbol );
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyIn) break;
+                nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseOr() );
+            }
 
+            return new ExprList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
+        }
+        
+        private ExpressionNode ParseTestList()
+        {
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add( ParseTest() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add( _lexer.CurSymbol );
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.PySemiColon 
+                    || _lexer.CurSymbol.Kind == TokenKind.Newline 
+                    || _lexer.CurSymbol.Kind == TokenKind.EndOfFile) break;
+                nodes.Add( ParseTest() );
+            }
 
+            return new TestList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
+        }
 
+        private ExpressionNode ParseDictorSetMaker()
+        {
+            throw new NotImplementedException();
+        }
+        
         private ExpressionNode ParseArgList()
         {
             throw new NotImplementedException();
         }
 
+        private ExpressionNode ParseArgumenter()
+        {
+            throw new NotImplementedException();
+        }
 
+        private ExpressionNode ParseCompIter()
+        {
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAsync || _lexer.CurSymbol.Kind == TokenKind.PyFor)
+                return ParseCompFor();
+            else
+                return ParseCompIf();
+        }
+
+        private ExpressionNode ParseSyncCompFor()
+        {
+            throw new NotImplementedException();
+        }
+        
         private ExpressionNode ParseCompFor()
         {
             throw new NotImplementedException();
+        }
+
+        private ExpressionNode ParseCompIf()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ExpressionNode ParseYieldExpr()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyFrom)
+            {
+                var symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTest();
+
+                return new YieldFrom(startPos, _lexer.Position, symbol, symbol2, right);
+            }
+
+            var rightPlain = ParseTestListStarExpr();
+
+            return new YieldExpr(startPos, _lexer.Position, symbol, rightPlain);
         }
 
         private ExpressionNode ParseVarArgsList()
@@ -600,6 +679,34 @@ namespace PythonCoreConcept.Parser
         }
         
         
+#endregion
+
+
+#region Statement rules
+
+        private StatementNode ParseTestListStarExpr()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public StatementNode ParseEvalInput()
+        {
+            var startPos = _lexer.Position;
+            var right = ParseTestList();
+            var newlines = new List<Token>();
+            while (_lexer.CurSymbol.Kind == TokenKind.Newline)
+            {
+                newlines.Add( _lexer.CurSymbol );
+                _lexer.Advance();
+            }
+
+            if (_lexer.CurSymbol.Kind != TokenKind.EndOfFile)
+                throw new SyntaxError(_lexer.Position, "Expecting end of file!", _lexer.CurSymbol);
+
+            return new EvalInputNode(startPos, _lexer.Position, right, newlines.ToArray(), _lexer.CurSymbol);
+        }
+
 #endregion
 
     }
