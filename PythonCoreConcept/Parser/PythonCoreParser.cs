@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.WebSockets;
 using PythonCoreConcept.Parser.AST;
 
 namespace PythonCoreConcept.Parser
@@ -623,12 +624,63 @@ namespace PythonCoreConcept.Parser
         
         private ExpressionNode ParseArgList()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add( ParseArgumenter() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyRightParen) break;
+                nodes.Add( ParseArgumenter() );
+            }
+            
+            return new ArgList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
 
         private ExpressionNode ParseArgumenter()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTest();
+
+                return new Argument(startPos, _lexer.Position, null, symbol, right);
+            }
+            else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTest();
+
+                return new Argument(startPos, _lexer.Position, null, symbol, right);
+            }
+            else
+            {
+                var left = ParseTest();
+                switch (_lexer.CurSymbol.Kind)
+                {
+                    case TokenKind.PyAsync:
+                    case TokenKind.PyFor:
+                        var right = ParseCompFor();
+                        return new Argument(startPos, _lexer.Position, left, null, right);
+                    case TokenKind.PyColonAssign:
+                        var symbol = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        var right2 = ParseTest();
+                        return new Argument(startPos, _lexer.Position, left, symbol, right2);
+                    case TokenKind.PyAssign:
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        var right3 = ParseTest();
+                        return new Argument(startPos, _lexer.Position, left, symbol2, right3);
+                    default:
+                        return left;
+                }
+            }
         }
 
         private ExpressionNode ParseCompIter()
