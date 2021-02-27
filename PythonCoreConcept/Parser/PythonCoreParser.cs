@@ -1239,7 +1239,49 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseWith()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var nodes = new List<StatementNode>();
+            var separators = new List<Token>();
+            nodes.Add( ParseWithItem() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                nodes.Add( ParseWithItem() );
+            }
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'with' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            
+            Token tc = null;
+            if (_lexer.CurSymbol.Kind == TokenKind.TypeComment)
+            {
+                tc = _lexer.CurSymbol;
+                _lexer.Advance();
+            }
+
+            var right = ParseSuite();
+
+            return new WithStatement(startPos, _lexer.Position, symbol, nodes.ToArray(), separators.ToArray(), symbol2, tc, right);
+        }
+
+        private StatementNode ParseWithItem()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseTest();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAs)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseOr();
+
+                return new WithItemStatement(startPos, _lexer.Position, left, symbol, right);
+            }
+            
+            return new WithItemStatement(startPos, _lexer.Position, left, null, null);
         }
         
         private StatementNode ParseTry()
