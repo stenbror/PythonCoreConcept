@@ -65,9 +65,79 @@ namespace PythonCoreConcept.Parser
                     return new AtomString(startPos, _lexer.Position, nodes.ToArray());
                 }
                 case TokenKind.PyLeftParen:
+                {
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyRightParen)
+                    {
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+
+                        return new AtomTuple(startPos, _lexer.Position, curSymbol, null, symbol2);
+                    }
+
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyYield)
+                    {
+                        var right = ParseYieldExpr();
+                        if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                            throw new SyntaxError(_lexer.Position, "Missing ')' in literal!", _lexer.CurSymbol);
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        
+                        return new AtomTuple(startPos, _lexer.Position, curSymbol, right, symbol2);
+                    }
+                    
+                    var rightNode = ParseTestListComp();
+                    if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                        throw new SyntaxError(_lexer.Position, "Missing ')' in literal!", _lexer.CurSymbol);
+                    var symbol3 = _lexer.CurSymbol;
+                    _lexer.Advance();
+                        
+                    return new AtomTuple(startPos, _lexer.Position, curSymbol, rightNode, symbol3);
+                    
+                }
                 case TokenKind.PyLeftBracket:
+                {
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyRightBracket)
+                    {
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+
+                        return new AtomList(startPos, _lexer.Position, curSymbol, null, symbol2);
+                    }
+                    else
+                    {
+                        var rightNode = ParseTestListComp();
+                        if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket)
+                            throw new SyntaxError(_lexer.Position, "Missing ']' in literal!", _lexer.CurSymbol);
+                        var symbol3 = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        
+                        return new AtomList(startPos, _lexer.Position, curSymbol, rightNode, symbol3);
+                    }
+                }
                 case TokenKind.PyLeftCurly:
-                    throw new NotImplementedException();
+                {
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyRightCurly)
+                    {
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        
+                        return new AtomDictionary(startPos, _lexer.Position, curSymbol, null, symbol2);
+                    }
+                    else
+                    {
+                        var right = ParseDictorSetMaker();
+                        if (_lexer.CurSymbol.Kind != TokenKind.PyRightCurly)
+                            throw new SyntaxError(_lexer.Position, "Missing '}' in literal!", _lexer.CurSymbol);
+                        var symbol2 = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        if (right is DictionaryContainer)
+                        {
+                            return new AtomDictionary(startPos, _lexer.Position, curSymbol, right, symbol2);
+                        }
+                        
+                        return new AtomSet(startPos, _lexer.Position, curSymbol, right, symbol2);
+                    }
+                }
                 default:
                     throw new SyntaxError(_lexer.Position, "Illegal literal!", curSymbol);
             }
