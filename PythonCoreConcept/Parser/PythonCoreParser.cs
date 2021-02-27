@@ -693,17 +693,57 @@ namespace PythonCoreConcept.Parser
 
         private ExpressionNode ParseSyncCompFor()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseExprList();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyIn) 
+                throw new SyntaxError(_lexer.Position, "Expecting 'in' in for expression!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseOrTest();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAsync || _lexer.CurSymbol.Kind == TokenKind.PyFor ||
+                _lexer.CurSymbol.Kind == TokenKind.PyIf)
+            {
+                var next = ParseCompIter();
+
+                return new SyncCompFor(startPos, _lexer.Position, symbol, left, symbol2, right, next);
+            }
+            
+            return new SyncCompFor(startPos, _lexer.Position, symbol, left, symbol2, right, null);
         }
         
         private ExpressionNode ParseCompFor()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAsync)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseSyncCompFor();
+
+                return new CompFor(startPos, _lexer.Position, symbol, right);
+            }
+
+            return ParseSyncCompFor();
         }
 
         private ExpressionNode ParseCompIf()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseTestNoCond();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAsync || _lexer.CurSymbol.Kind == TokenKind.PyFor ||
+                _lexer.CurSymbol.Kind == TokenKind.PyIf)
+            {
+                var next = ParseCompIter();
+
+                return new CompIf(startPos, _lexer.Position, symbol, left, next);
+            }
+
+
+            return new CompIf(startPos, _lexer.Position, symbol, left, null);
         }
 
         private ExpressionNode ParseYieldExpr()
