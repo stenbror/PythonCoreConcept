@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.WebSockets;
+using System.Runtime.Serialization.Json;
 using System.Security;
 using PythonCoreConcept.Parser.AST;
 
@@ -1375,6 +1376,62 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseDecorated()
         {
+            var startPos = _lexer.Position;
+            var left = ParseDecorators();
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyClass:
+                    var rightClass = ParseClass();
+                    return new DecoratedStatement(startPos, _lexer.Position, left, rightClass);
+                case TokenKind.PyDef:
+                    var rightDef = ParseClass();
+                    return new DecoratedStatement(startPos, _lexer.Position, left, rightDef);
+                case TokenKind.PyAsync:
+                    var rightAsync = ParseAsyncFuncDef();
+                    return new DecoratedStatement(startPos, _lexer.Position, left, rightAsync);
+                default:
+                    throw new SyntaxError(_lexer.Position, "Expecting 'async', 'class' or 'def' after '@' decorators!", _lexer.CurSymbol);
+            }
+        }
+
+        private StatementNode ParseDecorators()
+        {
+            var startPos = _lexer.Position;
+            var nodes = new List<StatementNode>();
+            nodes.Add( ParseDecorator() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyMatrice) nodes.Add( ParseDecorator() );
+
+            return new DecoratorsStatement(startPos, _lexer.Position, nodes.ToArray());
+        }
+        
+        private StatementNode ParseDecorator()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseDottedName();
+            Token symbol2 = null, symbol3 = null;
+            ExpressionNode right = null;
+            if (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen)
+            {
+                symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen) right = ParseArgList();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                    throw new SyntaxError(_lexer.Position, "Expecting ')' in decorator!", _lexer.CurSymbol);
+                symbol3 = _lexer.CurSymbol;
+                _lexer.Advance();
+            }
+            if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                throw new SyntaxError(_lexer.Position, "Expecting Newkine after decorator!", _lexer.CurSymbol);
+            var symbol4 = _lexer.CurSymbol;
+            _lexer.Advance();
+
+            return new DecoratorStatement(startPos, _lexer.Position, symbol, left, symbol2, right, symbol3, symbol4);
+        }
+
+        private StatementNode ParseAsyncFuncDef()
+        {
             throw new NotImplementedException();
         }
         
@@ -1419,6 +1476,13 @@ namespace PythonCoreConcept.Parser
         
         
         private StatementNode ParseTestListStarExpr()
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        private StatementNode ParseDottedName()
         {
             throw new NotImplementedException();
         }
