@@ -369,11 +369,11 @@ namespace PythonCoreConcept.Parser.AST
         : StatementNode(StartPos, EndPos);
     
     public record VarArgsListStatement(UInt32 StartPos, UInt32 EndPos, 
-            StatementNode[] Nodes, Token[] Separators, Token Slash, Token Mul, ExpressionNode MulNode, Token Power, ExpressionNode PowerNode, Token TypeComment) 
+            ExpressionNode[] Nodes, Token[] Separators, Token Slash, Token Mul, NameToken MulNode, Token Power, NameToken PowerNode) 
         : ExpressionNode(StartPos, EndPos);
     
     public record VfpDefAssignStatement(UInt32 StartPos, UInt32 EndPos, 
-            StatementNode Left, Token Symbol, ExpressionNode Right) 
+            NameToken Left, Token Symbol, ExpressionNode Right) 
         : ExpressionNode(StartPos, EndPos);
 
     public record TypeNode(UInt32 StartPos, UInt32 EndPos) : Node(StartPos, EndPos);

@@ -918,7 +918,187 @@ namespace PythonCoreConcept.Parser
 
         private ExpressionNode ParseVarArgsList()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            Token div = null;
+            Token mulOp = null, powerOp = null;
+            NameToken mulNode = null, powerNode = null;
+
+            if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+            {
+                mulOp = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Missing NAME literal after '*' in argument list!", _lexer.CurSymbol);
+                mulNode = _lexer.CurSymbol as NameToken;
+                _lexer.Advance();
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add( _lexer.CurSymbol );
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyColon) continue;
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                    {
+                        powerOp = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                            throw new SyntaxError(_lexer.Position, "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                        powerNode = _lexer.CurSymbol as NameToken;
+                        _lexer.Advance();
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        {
+                            separators.Add( _lexer.CurSymbol );
+                            _lexer.Advance();
+                        }
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                        continue;
+                    }
+                    nodes.Add( ParseVfpDefAssign() );
+                }
+
+            }
+            else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+            {
+                powerOp = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                powerNode = _lexer.CurSymbol as NameToken;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add( _lexer.CurSymbol );
+                    _lexer.Advance();
+                }
+                if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                    throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+            }
+            else
+            {
+                nodes.Add( ParseVfpDefAssign() );
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add(_lexer.CurSymbol);
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyMul 
+                        || _lexer.CurSymbol.Kind == TokenKind.PyPower
+                        || _lexer.CurSymbol.Kind == TokenKind.PyColon
+                        || _lexer.CurSymbol.Kind == TokenKind.PyDiv) continue;
+                    nodes.Add( ParseVfpDefAssign() );
+                }
+
+                if (_lexer.CurSymbol.Kind == TokenKind.PyDiv)
+                {
+                    div = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var lastToken = div;
+
+                    if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                    {
+                        while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        {
+                            separators.Add(_lexer.CurSymbol);
+                            lastToken = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyMul 
+                                || _lexer.CurSymbol.Kind == TokenKind.PyPower
+                                || _lexer.CurSymbol.Kind == TokenKind.PyColon) continue;
+                            nodes.Add(ParseVfpDefAssign());
+                            if (_lexer.CurSymbol.Kind != TokenKind.PyComma)
+                                return new VarArgsListStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), div, mulOp, mulNode, powerOp, powerNode);
+                        }
+                        
+                        if (lastToken.Kind != TokenKind.PyComma)
+                            throw new SyntaxError(_lexer.Position, "Expected ',' in argument list!", _lexer.CurSymbol);
+
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+                        {
+                            mulOp = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                                throw new SyntaxError(_lexer.Position, "Missing NAME literal after '*' in argument list!", _lexer.CurSymbol);
+                            mulNode = _lexer.CurSymbol as NameToken;
+                            _lexer.Advance();
+                            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            {
+                                separators.Add(_lexer.CurSymbol);
+                                _lexer.Advance();
+                                if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                    throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!",
+                                        _lexer.CurSymbol);
+                                if (_lexer.CurSymbol.Kind == TokenKind.PyColon) continue;
+                                if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                                {
+                                    powerOp = _lexer.CurSymbol;
+                                    _lexer.Advance();
+                                    if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                                        throw new SyntaxError(_lexer.Position,
+                                            "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                                    powerNode = _lexer.CurSymbol as NameToken;
+                                    _lexer.Advance();
+                                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                    {
+                                        separators.Add(_lexer.CurSymbol);
+                                        _lexer.Advance();
+                                    }
+
+                                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                        throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!",
+                                            _lexer.CurSymbol);
+                                    continue;
+                                }
+
+                                nodes.Add(ParseVfpDefAssign());
+                            }
+                        }
+                        else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                        {
+                            powerOp = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                                throw new SyntaxError(_lexer.Position, "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                            powerNode = _lexer.CurSymbol as NameToken;
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            {
+                                separators.Add( _lexer.CurSymbol );
+                                _lexer.Advance();
+                            }
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                        }
+                    }
+                }
+            }
+            
+            return new VarArgsListStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), div, mulOp, mulNode, powerOp, powerNode);
+        }
+
+        private ExpressionNode ParseVfpDefAssign()
+        {
+            var startPos = _lexer.Position;
+            Token left = null, assignment = null;
+            ExpressionNode right = null;
+            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Missing NAME literal in argument list!", _lexer.CurSymbol);
+            left = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAssign)
+            {
+                assignment = _lexer.CurSymbol;
+                _lexer.Advance();
+                right = ParseTest();
+            }
+
+            return new VfpDefAssignStatement(startPos, _lexer.Position, left as NameToken, assignment, right);
         }
         
         
