@@ -1192,7 +1192,24 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseAsync()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            StatementNode right = null;
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyDef:
+                    right = ParseFuncDef();
+                    return new AsyncStatement(startPos, _lexer.Position, symbol, right);
+                case TokenKind.PyWith:
+                    right = ParseWith();
+                    return new AsyncStatement(startPos, _lexer.Position, symbol, right);
+                case TokenKind.PyFor:
+                    right = ParseFor();
+                    return new AsyncStatement(startPos, _lexer.Position, symbol, right);
+            }
+
+            throw new SyntaxError(_lexer.Position, "Expecting 'def', 'with' or 'for' after 'async' statement!", _lexer.CurSymbol);
         }
 
 
