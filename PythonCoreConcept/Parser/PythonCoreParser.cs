@@ -1286,7 +1286,91 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseTry()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'try' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseSuite();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyFinally)
+            {
+                var symbol3 = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                    throw new SyntaxError(_lexer.Position, "Missing ':' in 'finally' statement!", _lexer.CurSymbol);
+                var symbol4 = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseSuite();
+
+                return new TryStatement(startPos, _lexer.Position, 
+                    symbol, symbol2, left, new StatementNode[] {}, null, symbol3, symbol4, right);
+            }
+            else
+            {
+                if (_lexer.CurSymbol.Kind != TokenKind.PyExcept)
+                    throw new SyntaxError(_lexer.Position, "Missing 'except' in 'try' statement!", _lexer.CurSymbol);
+                var nodes = new List<StatementNode>();
+                while (_lexer.CurSymbol.Kind == TokenKind.PyExcept) nodes.Add( ParseExcept() );
+                StatementNode node = null;
+                if (_lexer.CurSymbol.Kind == TokenKind.PyElse) node = ParseElse();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyFinally)
+                {
+                    var symbol3 = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                        throw new SyntaxError(_lexer.Position, "Missing ':' in 'finally' statement!", _lexer.CurSymbol);
+                    var symbol4 = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = ParseSuite();
+
+                    return new TryStatement(startPos, _lexer.Position, 
+                        symbol, symbol2, left, nodes.ToArray(), node, symbol3, symbol4, right);
+                }
+
+                return new TryStatement(startPos, _lexer.Position, 
+                    symbol, symbol2, left, nodes.ToArray(), node, null, null, null);
+            }
+        }
+
+        private StatementNode ParseExcept()
+        {
+            var startPos = _lexer.Position;
+            var left = ParseExceptClause();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Missing ':' in 'except' statement!", _lexer.CurSymbol);
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseSuite();
+
+            return new ExceptStatement(startPos, _lexer.Position, left, symbol, right);
+        }
+
+        private StatementNode ParseExceptClause()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+            {
+                var left = ParseTest();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyAs)
+                {
+                    var symbol2 = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                        throw new SyntaxError(_lexer.Position, "Missing Name after 'as' in 'except' statement!", _lexer.CurSymbol);
+                    var right = _lexer.CurSymbol as NameToken;
+                    _lexer.Advance();
+
+                    return new ExceptClauseStatement(startPos, _lexer.Position, symbol, left, symbol2, right);
+                }
+                
+                return new ExceptClauseStatement(startPos, _lexer.Position, symbol, left, null, null);
+            }
+            
+            return new ExceptClauseStatement(startPos, _lexer.Position, symbol, null, null, null);
         }
         
         private StatementNode ParseDecorated()

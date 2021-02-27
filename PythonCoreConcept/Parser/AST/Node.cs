@@ -229,9 +229,12 @@ namespace PythonCoreConcept.Parser.AST
             StatementNode[] ExceptNodes, StatementNode ElseNode, 
             Token Symbol3, Token Symbol4, StatementNode Right) 
         : StatementNode(StartPos, EndPos);
+
+    public record ExceptStatement(UInt32 StartPos, UInt32 EndPos, StatementNode Left, Token Symbol, StatementNode Right) 
+        : StatementNode(StartPos, EndPos);
     
-    public record ExceptStatement(UInt32 StartPos, UInt32 EndPos,
-            Token Symbol1, ExpressionNode Left, Token Symbol2, Token Symbol3) 
+    public record ExceptClauseStatement(UInt32 StartPos, UInt32 EndPos,
+            Token Symbol1, ExpressionNode Left, Token Symbol2, NameToken Symbol3) 
         : StatementNode(StartPos, EndPos);
     
     public record WithStatement(UInt32 StartPos, UInt32 EndPos,
