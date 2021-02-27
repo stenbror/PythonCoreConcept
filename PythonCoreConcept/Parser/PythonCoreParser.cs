@@ -619,7 +619,88 @@ namespace PythonCoreConcept.Parser
 
         private ExpressionNode ParseDictorSetMaker()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            var isDictionary = true;
+            
+            if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+            {
+                isDictionary = false;
+                var right = ParseStarExpr();
+                nodes.Add( right );
+            }
+            else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+            {
+                var powerOp = _lexer.CurSymbol;
+                _lexer.Advance();
+                var powerNode = ParseOr();
+                
+                nodes.Add( new DictionaryKW(startPos, _lexer.Position, powerOp, powerNode) );
+            }
+            else
+            {
+                var key = ParseTest();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyColon)
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var value = ParseTest();
+                    nodes.Add( new DictionaryEntry(startPos, _lexer.Position, key, symbol, value) );
+                }
+                else
+                {
+                    isDictionary = false;
+                    nodes.Add( key );
+                }
+            }
+
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAsync || _lexer.CurSymbol.Kind == TokenKind.PyFor)
+                nodes.Add( ParseCompFor() );
+            else
+            {
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add( _lexer.CurSymbol );
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyRightCurly) break;
+                    if (isDictionary)
+                    {
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                        {
+                            var powerOp = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            var powerNode = ParseOr();
+                
+                            nodes.Add( new DictionaryKW(startPos, _lexer.Position, powerOp, powerNode) );
+                        }
+                        else
+                        {
+                            var key = ParseTest();
+                            if (_lexer.CurSymbol.Kind != TokenKind.PyColon) 
+                                throw new SyntaxError(_lexer.Position, "Missing ':' in dictionary entry!", _lexer.CurSymbol);
+                            var symbol = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            var value = ParseTest();
+                            nodes.Add( new DictionaryEntry(startPos, _lexer.Position, key, symbol, value) );
+                        }
+                    }
+                    else
+                    {
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyMul) nodes.Add(ParseStarExpr());
+                        else nodes.Add( ParseTest() );
+                    }
+                }
+            }
+
+            if (isDictionary)
+            {
+                return new DictionaryContainer(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
+            }
+            else
+            {
+                return new SetContainer(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
+            }
         }
         
         private ExpressionNode ParseArgList()

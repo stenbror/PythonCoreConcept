@@ -165,17 +165,18 @@ namespace PythonCoreConcept.Parser.AST
         : ExpressionNode(StartPos, EndPos);
     
     public record DictionaryContainer(UInt32 StartPos, UInt32 EndPos,
-            ExpressionNode[] Entries, Token[] Separators,
-            Token PowerSymbol, ExpressionNode PowerNode) 
+            ExpressionNode[] Entries, Token[] Separators) 
         : ExpressionNode(StartPos, EndPos);
     
     public record DictionaryEntry(UInt32 StartPos, UInt32 EndPos, 
             ExpressionNode Key, Token Symbol, ExpressionNode Value) 
         : ExpressionNode(StartPos, EndPos);
+
+    public record DictionaryKW(UInt32 StartPos, UInt32 EndPos, Token Symbol, ExpressionNode Right)
+        : ExpressionNode(StartPos, EndPos);
     
     public record SetContainer(UInt32 StartPos, UInt32 EndPos, 
-            ExpressionNode[] Nodes, Token[] Separators,
-            Token MulSymbol, ExpressionNode MulNode) 
+            ExpressionNode[] Nodes, Token[] Separators) 
         : ExpressionNode(StartPos, EndPos);
     
     public record ArgList(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) 
