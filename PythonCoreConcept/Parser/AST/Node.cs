@@ -324,9 +324,9 @@ namespace PythonCoreConcept.Parser.AST
     
     public record DottedAsNameStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol1, Token Symbol2) : StatementNode(StartPos, EndPos);
     
-    public record ImportAsNamesStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators ) : StatementNode(StartPos, EndPos);
+    public record ImportAsNamesStatement(UInt32 StartPos, UInt32 EndPos, StatementNode[] Nodes, Token[] Separators ) : StatementNode(StartPos, EndPos);
     
-    public record DottedAsNamesStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode[] Nodes, Token[] Separators) : StatementNode(StartPos, EndPos);
+    public record DottedAsNamesStatement(UInt32 StartPos, UInt32 EndPos, StatementNode[] Nodes, Token[] Separators) : StatementNode(StartPos, EndPos);
     
     public record DottedNameStatement(UInt32 StartPos, UInt32 EndPos, Token[] Nodes, Token[] Separators) : StatementNode(StartPos, EndPos);
     

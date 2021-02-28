@@ -1876,12 +1876,18 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseImportStmt()
         {
-            throw new NotImplementedException();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyImport) return ParseImportNameStmt();
+            else return ParseImportFromStmt();
         }
 
         private StatementNode ParseImportNameStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseDottedAsNamesStmt();
+            
+            return new ImportNameStatement(startPos, _lexer.Position, symbol, right);
         }
         
         private StatementNode ParseImportFromStmt()
@@ -1891,7 +1897,23 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseImportAsNameStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            Token symbol = null, symbol2 = null, symbol3 = null;
+            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
+            symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAs)
+            {
+                symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
+                symbol3 = _lexer.CurSymbol;
+                _lexer.Advance();
+            }
+
+            return new ImportAsNameStatement(startPos, _lexer.Position, symbol, symbol2, symbol3);
         }
         
         private StatementNode ParseDottedAsNameStmt()
@@ -1901,17 +1923,61 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseImportAsNamesStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<StatementNode>();
+            var separators = new List<Token>();
+            nodes.Add( ParseImportAsNamesStmt() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyRightParen || _lexer.CurSymbol.Kind == TokenKind.Newline ||
+                    _lexer.CurSymbol.Kind == TokenKind.PySemiColon)
+                {
+                    continue;
+                }
+                nodes.Add( ParseImportAsNamesStmt() );
+            }
+
+            return new ImportAsNamesStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
         
         private StatementNode ParseDottedAsNamesStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<StatementNode>();
+            var separators = new List<Token>();
+            nodes.Add( ParseDottedAsNameStmt() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                nodes.Add( ParseDottedAsNameStmt() );
+            }
+
+            return new DottedAsNamesStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
         
         private StatementNode ParseDottedName()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<Token>();
+            var dots = new List<Token>();
+            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
+            nodes.Add(_lexer.CurSymbol);
+            _lexer.Advance();
+            while (_lexer.CurSymbol.Kind == TokenKind.Name)
+            {
+                dots.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
+                nodes.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+            }
+
+            return new DottedNameStatement(startPos, _lexer.Position, nodes.ToArray(), dots.ToArray());
         }
         
         private StatementNode ParseGlobalStmt()
