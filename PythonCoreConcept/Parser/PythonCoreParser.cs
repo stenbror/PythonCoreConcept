@@ -1560,9 +1560,13 @@ namespace PythonCoreConcept.Parser
             switch (_lexer.CurSymbol.Kind)
             {
                 case TokenKind.PyDel:
+                    return ParseDelStmt();
                 case TokenKind.PyPass:
+                    return ParsePassStmt();
                 case TokenKind.PyBreak:
+                    return ParseBreakStmt();
                 case TokenKind.PyContinue:
+                    return ParseContinueStmt();
                 case TokenKind.PyRaise:
                 case TokenKind.PyYield:
                 case TokenKind.PyReturn:
@@ -1760,6 +1764,43 @@ namespace PythonCoreConcept.Parser
             }
 
             return new TestListStarExprStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
+        }
+
+        private StatementNode ParseDelStmt()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseExprList();
+
+            return new DelStatement(startPos, _lexer.Position, symbol, right);
+        }
+
+        private StatementNode ParsePassStmt()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+
+            return new PassStatement(startPos, _lexer.Position, symbol);
+        }
+        
+        private StatementNode ParseBreakStmt()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+
+            return new BreakStatement(startPos, _lexer.Position, symbol);
+        }
+        
+        private StatementNode ParseContinueStmt()
+        {
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+
+            return new ContinueStatement(startPos, _lexer.Position, symbol);
         }
 
 
