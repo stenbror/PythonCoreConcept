@@ -1892,7 +1892,50 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseImportFromStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var dots = new List<Token>();
+            StatementNode left = null, right = null;
+
+            while (_lexer.CurSymbol.Kind == TokenKind.PyElipsis || _lexer.CurSymbol.Kind == TokenKind.PyDot)
+            {
+                dots.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+            }
+
+            if (_lexer.CurSymbol.Kind == TokenKind.PyImport && dots.Count == 0)
+                throw new SyntaxError(_lexer.Position, "Missing 'from' part of import statement!", _lexer.CurSymbol);
+            else if (_lexer.CurSymbol.Kind != TokenKind.PyImport) left = ParseDottedName();
+
+            if (_lexer.CurSymbol.Kind != TokenKind.PyImport)
+                throw new SyntaxError(_lexer.Position, "Expected 'import' in 'from' statement!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+
+            if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+            {
+                var symbol5 = _lexer.CurSymbol;
+                _lexer.Advance();
+                
+                return new ImportFromStatement(startPos, _lexer.Position, symbol, dots.ToArray(), left, symbol2, symbol5, null, null);
+            }
+            else if (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen)
+            {
+                var symbol3 = _lexer.CurSymbol;
+                _lexer.Advance();
+                right = ParseImportAsNamesStmt();
+                if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                    throw new SyntaxError(_lexer.Position, "Missing ')' in import statement!", _lexer.CurSymbol);
+                var symbol4 = _lexer.CurSymbol;
+                _lexer.Advance();
+
+                return new ImportFromStatement(startPos, _lexer.Position, symbol, dots.ToArray(), left, symbol2, symbol3, right, symbol4);
+            }
+
+            right = ParseImportAsNamesStmt();
+
+            return new ImportFromStatement(startPos, _lexer.Position, symbol, dots.ToArray(), left, symbol2, null, right, null);
         }
         
         private StatementNode ParseImportAsNameStmt()
@@ -1918,7 +1961,21 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseDottedAsNameStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var left = ParseDottedName();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAs)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
+                var right = _lexer.CurSymbol;
+                _lexer.Advance();
+
+                return new DottedAsNameStatement(startPos, _lexer.Position, left, symbol, right as NameToken);
+            }
+
+            return left;
         }
         
         private StatementNode ParseImportAsNamesStmt()
@@ -1926,7 +1983,7 @@ namespace PythonCoreConcept.Parser
             var startPos = _lexer.Position;
             var nodes = new List<StatementNode>();
             var separators = new List<Token>();
-            nodes.Add( ParseImportAsNamesStmt() );
+            nodes.Add( ParseImportAsNameStmt() );
             while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
             {
                 separators.Add(_lexer.CurSymbol);
@@ -1936,7 +1993,7 @@ namespace PythonCoreConcept.Parser
                 {
                     continue;
                 }
-                nodes.Add( ParseImportAsNamesStmt() );
+                nodes.Add( ParseImportAsNameStmt() );
             }
 
             return new ImportAsNamesStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());

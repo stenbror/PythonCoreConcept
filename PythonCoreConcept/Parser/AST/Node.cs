@@ -322,7 +322,7 @@ namespace PythonCoreConcept.Parser.AST
     
     public record ImportAsNameStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol1, Token Symbol2, Token Symbol3) : StatementNode(StartPos, EndPos);
     
-    public record DottedAsNameStatement(UInt32 StartPos, UInt32 EndPos, ExpressionNode Left, Token Symbol1, Token Symbol2) : StatementNode(StartPos, EndPos);
+    public record DottedAsNameStatement(UInt32 StartPos, UInt32 EndPos, StatementNode Left, Token Symbol1, NameToken Symbol2) : StatementNode(StartPos, EndPos);
     
     public record ImportAsNamesStatement(UInt32 StartPos, UInt32 EndPos, StatementNode[] Nodes, Token[] Separators ) : StatementNode(StartPos, EndPos);
     
