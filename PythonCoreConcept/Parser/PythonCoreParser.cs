@@ -1556,9 +1556,30 @@ namespace PythonCoreConcept.Parser
 
         public StatementNode ParseSmallStmt()
         {
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyDel:
+                case TokenKind.PyPass:
+                case TokenKind.PyBreak:
+                case TokenKind.PyContinue:
+                case TokenKind.PyRaise:
+                case TokenKind.PyYield:
+                case TokenKind.PyReturn:
+                case TokenKind.PyImport:
+                case TokenKind.PyFrom:
+                case TokenKind.PyGlobal:
+                case TokenKind.PyNonLocal:
+                case TokenKind.PyAssert:
+                    throw new NotImplementedException();
+                default:
+                    return ParseExprStmt();
+            }
+        }
+
+        private StatementNode ParseExprStmt()
+        {
             throw new NotImplementedException();
         }
-        
         
         private StatementNode ParseTestListStarExpr()
         {
