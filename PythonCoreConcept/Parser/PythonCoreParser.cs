@@ -1901,12 +1901,109 @@ namespace PythonCoreConcept.Parser
         
         public TypeNode ParseFuncType()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            Token symbol1 = null, symbol2 = null, symbol3 = null;
+            TypeNode left = null;
+            if (_lexer.CurSymbol.Kind != TokenKind.PyLeftParen)
+                throw new SyntaxError(_lexer.Position, "Expecting '(' in func type!", _lexer.CurSymbol);
+            symbol1 = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen) left = ParseTypeList();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+                throw new SyntaxError(_lexer.Position, "Expecting ')' in func type!", _lexer.CurSymbol);
+            symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.PyArrow)
+                throw new SyntaxError(_lexer.Position, "Expecting '->' in func type!", _lexer.CurSymbol);
+            symbol3 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseTest();
+
+            return new FuncType(startPos, _lexer.Position, symbol1, left, symbol2, symbol3, right);
         }
 
         public TypeNode ParseTypeList()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            Token opMul = null, opPower = null;
+            ExpressionNode mulNode = null, powerNode = null;
+
+            if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+            {
+                opMul = _lexer.CurSymbol;
+                _lexer.Advance();
+                mulNode = ParseTest();
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add(_lexer.CurSymbol);
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                    {
+                        opPower = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        powerNode = ParseTest();
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            throw new SyntaxError(_lexer.Position, "Unexpected ',' after ** argument!", _lexer.CurSymbol);
+                    }
+                    else
+                    {
+                        nodes.Add( ParseTest() );
+                    }
+                }
+            }
+            else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+            {
+                opPower = _lexer.CurSymbol;
+                _lexer.Advance();
+                powerNode = ParseTest();
+            }
+            else
+            {
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add(_lexer.CurSymbol);
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+                    {
+                        opMul = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        mulNode = ParseTest();
+                        while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        {
+                            separators.Add(_lexer.CurSymbol);
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                            {
+                                opPower = _lexer.CurSymbol;
+                                _lexer.Advance();
+                                powerNode = ParseTest();
+                                if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                    throw new SyntaxError(_lexer.Position, "Unexpected ',' after ** argument!", _lexer.CurSymbol);
+                            }
+                            else
+                            {
+                                nodes.Add( ParseTest() );
+                            }
+                        }
+                    }
+                    else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                    {
+                        opPower = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        powerNode = ParseTest();
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            throw new SyntaxError(_lexer.Position, "Unexpected ',' after ** argument!", _lexer.CurSymbol);
+                    }
+                    else
+                    {
+                        nodes.Add( ParseTest() );
+                    }
+                }
+            }
+
+            return new TypeList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), opMul, mulNode, opPower, powerNode);
         }
 
         public StatementNode ParseEvalInput()
@@ -1983,7 +2080,19 @@ namespace PythonCoreConcept.Parser
 
         public TypeNode ParseFuncTypeInput()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var newlines = new List<Token>();
+            var right = ParseFuncType();
+            while (_lexer.CurSymbol.Kind == TokenKind.Newline)
+            {
+                newlines.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+            }
+
+            if (_lexer.CurSymbol.Kind == TokenKind.EndOfFile)
+                throw new SyntaxError(_lexer.Position, "Expecting end of file!", _lexer.CurSymbol);
+
+            return new TypeInput(startPos, _lexer.Position, right, newlines.ToArray(), _lexer.CurSymbol);
         }
         
 #endregion
