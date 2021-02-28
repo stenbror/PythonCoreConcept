@@ -1452,12 +1452,37 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseTypedAssign()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var left = ParseTfpDef();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAssign)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTest();
+
+                return new TfpDefAssignStatement(startPos, _lexer.Position, left, symbol, right);
+            }
+
+            return left;
         }
         
         private StatementNode ParseTfpDef()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            if (_lexer.CurSymbol.Kind == TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Expecting Name literal in argument!", _lexer.CurSymbol);
+            var left = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyColon)
+            {
+                var symbol = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTest();
+
+                return new TfpDefStatement(startPos, _lexer.Position, left, symbol, right);
+            }
+            
+            return new TfpDefStatement(startPos, _lexer.Position, left, null, null);
         }
         
         private StatementNode ParseClass()
