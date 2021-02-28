@@ -1442,22 +1442,22 @@ namespace PythonCoreConcept.Parser
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseParameterStmt()
+        private StatementNode ParseParameterStmt()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseTypedArgsList()
+        private StatementNode ParseTypedArgsList()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseTypedAssign()
+        private StatementNode ParseTypedAssign()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseTfpDef()
+        private StatementNode ParseTfpDef()
         {
             throw new NotImplementedException();
         }
@@ -1537,7 +1537,7 @@ namespace PythonCoreConcept.Parser
             throw new SyntaxError(_lexer.Position, "Expecting 'def', 'with' or 'for' after 'async' statement!", _lexer.CurSymbol);
         }
 
-        public StatementNode ParseStmt()
+        private StatementNode ParseStmt()
         {
             switch (_lexer.CurSymbol.Kind)
             {
@@ -1556,7 +1556,7 @@ namespace PythonCoreConcept.Parser
             }
         }
 
-        public StatementNode ParseSimpleStmt()
+        private StatementNode ParseSimpleStmt()
         {
             var startPos = _lexer.Position;
             var nodes = new List<StatementNode>();
@@ -1576,7 +1576,7 @@ namespace PythonCoreConcept.Parser
             return new SimpleStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), newline);
         }
 
-        public StatementNode ParseSmallStmt()
+        private StatementNode ParseSmallStmt()
         {
             switch (_lexer.CurSymbol.Kind)
             {
@@ -1830,52 +1830,81 @@ namespace PythonCoreConcept.Parser
             return new ContinueStatement(startPos, _lexer.Position, symbol);
         }
 
-        public StatementNode ParseReturnStmt()
+        private StatementNode ParseReturnStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.Newline && _lexer.CurSymbol.Kind == TokenKind.PySemiColon)
+            {
+                var right = ParseTestListStarExpr();
+
+                return new ReturnStatement(startPos, _lexer.Position, symbol, right);
+            }
+            
+            return new ReturnStatement(startPos, _lexer.Position, symbol, null);
         }
         
-        public StatementNode ParseYieldStmt()
+        private StatementNode ParseYieldStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var right = ParseYieldExpr();
+            
+            return new YieldStatement(startPos, _lexer.Position, right);
         }
         
-        public StatementNode ParseRaiseStmt()
+        private StatementNode ParseRaiseStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            ExpressionNode left = null, right = null;
+            Token symbol2 = null;
+            if (_lexer.CurSymbol.Kind != TokenKind.Newline && _lexer.CurSymbol.Kind != TokenKind.PySemiColon)
+            {
+                left = ParseTest();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyFrom)
+                {
+                    symbol2 = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    right = ParseTest();
+                }
+            }
+            
+            return new RaiseStatement(startPos, _lexer.Position, symbol, left, symbol2, right);
         }
         
-        public StatementNode ParseImportStmt()
+        private StatementNode ParseImportStmt()
         {
             throw new NotImplementedException();
         }
 
-        public StatementNode ParseImportNameStmt()
+        private StatementNode ParseImportNameStmt()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseImportFromStmt()
+        private StatementNode ParseImportFromStmt()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseImportAsNameStmt()
+        private StatementNode ParseImportAsNameStmt()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseDottedAsNameStmt()
+        private StatementNode ParseDottedAsNameStmt()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseImportAsNamesStmt()
+        private StatementNode ParseImportAsNamesStmt()
         {
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseDottedAsNamesStmt()
+        private StatementNode ParseDottedAsNamesStmt()
         {
             throw new NotImplementedException();
         }
@@ -1885,7 +1914,7 @@ namespace PythonCoreConcept.Parser
             throw new NotImplementedException();
         }
         
-        public StatementNode ParseGlobalStmt()
+        private StatementNode ParseGlobalStmt()
         {
             var startPos = _lexer.Position;
             var nodes = new List<Token>();
@@ -1909,7 +1938,7 @@ namespace PythonCoreConcept.Parser
             return new GlobalStatement(startPos, _lexer.Position, symbol, nodes.ToArray(), separators.ToArray());
         }
         
-        public StatementNode ParseNonLocalStmt()
+        private StatementNode ParseNonLocalStmt()
         {
             var startPos = _lexer.Position;
             var nodes = new List<Token>();
@@ -1933,7 +1962,7 @@ namespace PythonCoreConcept.Parser
             return new NonlocalStatement(startPos, _lexer.Position, symbol, nodes.ToArray(), separators.ToArray());
         }
         
-        public StatementNode ParseAssertStmt()
+        private StatementNode ParseAssertStmt()
         {
             var startPos = _lexer.Position;
             var symbol = _lexer.CurSymbol;
@@ -1951,7 +1980,7 @@ namespace PythonCoreConcept.Parser
             return new AssertStatement(startPos, _lexer.Position, symbol, left, null, null);
         }
         
-        public TypeNode ParseFuncType()
+        private TypeNode ParseFuncType()
         {
             var startPos = _lexer.Position;
             Token symbol1 = null, symbol2 = null, symbol3 = null;
@@ -1974,7 +2003,7 @@ namespace PythonCoreConcept.Parser
             return new FuncType(startPos, _lexer.Position, symbol1, left, symbol2, symbol3, right);
         }
 
-        public TypeNode ParseTypeList()
+        private TypeNode ParseTypeList()
         {
             var startPos = _lexer.Position;
             var nodes = new List<ExpressionNode>();
