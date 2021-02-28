@@ -249,7 +249,7 @@ namespace PythonCoreConcept.Parser.AST
             Token Symbol1, Token Symbol2, StatementNode[] Nodes, Token Symbol3) 
         : StatementNode(StartPos, EndPos);
     
-    public record SimpleStatement(UInt32 StartPos, UInt32 EndPos, StatementNode[] Nodes, Token Separators, Token Symbol) 
+    public record SimpleStatement(UInt32 StartPos, UInt32 EndPos, StatementNode[] Nodes, Token[] Separators, Token Symbol) 
         : StatementNode(StartPos, EndPos);
     
     public record PlusAssignStatement(UInt32 StartPos, UInt32 EndPos, Node Left, Token Symbol, ExpressionNode Right) 

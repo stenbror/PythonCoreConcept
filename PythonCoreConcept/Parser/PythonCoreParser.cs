@@ -1472,7 +1472,25 @@ namespace PythonCoreConcept.Parser
 
         private StatementNode ParseSuite()
         {
-            throw new NotImplementedException();
+            if (_lexer.CurSymbol.Kind == TokenKind.Newline)
+            {
+                var startPos = _lexer.Position;
+                var newline = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.Indent)
+                    throw new SyntaxError(_lexer.Position, "Missing indentation!", _lexer.CurSymbol);
+                var indent = _lexer.CurSymbol;
+                _lexer.Advance();
+                var nodes = new List<StatementNode>();
+                nodes.Add( ParseStmt() );
+                while (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add( ParseStmt() );
+                var dedent = _lexer.CurSymbol;
+                _lexer.Advance();
+
+                return new SuiteStatement(startPos, _lexer.Position, newline, indent, nodes.ToArray(), dedent);
+            }
+
+            return ParseSimpleStmt();
         }
         
         private StatementNode ParseAsync()
@@ -1496,8 +1514,50 @@ namespace PythonCoreConcept.Parser
 
             throw new SyntaxError(_lexer.Position, "Expecting 'def', 'with' or 'for' after 'async' statement!", _lexer.CurSymbol);
         }
-        
-        
+
+        public StatementNode ParseStmt()
+        {
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyIf:
+                case TokenKind.PyWhile:
+                case TokenKind.PyFor:
+                case TokenKind.PyTry:
+                case TokenKind.PyWith:
+                case TokenKind.PyAsync:
+                case TokenKind.PyDef:
+                case TokenKind.PyClass:
+                case TokenKind.PyMatrice:
+                    return ParseCompound();
+                default:
+                    return ParseSimpleStmt();
+            }
+        }
+
+        public StatementNode ParseSimpleStmt()
+        {
+            var startPos = _lexer.Position;
+            var nodes = new List<StatementNode>();
+            var separators = new List<Token>();
+            nodes.Add( ParseSmallStmt() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PySemiColon)
+            {
+                separators.Add( _lexer.CurSymbol );
+                if (_lexer.CurSymbol.Kind != TokenKind.Newline) nodes.Add( ParseSmallStmt() );
+            }
+
+            if (_lexer.CurSymbol.Kind != TokenKind.Newline)
+                throw new SyntaxError(_lexer.Position, "Expecting newline or ';' in statement kist!", _lexer.CurSymbol);
+            var newline = _lexer.CurSymbol;
+            _lexer.Advance();
+
+            return new SimpleStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), newline);
+        }
+
+        public StatementNode ParseSmallStmt()
+        {
+            throw new NotImplementedException();
+        }
         
         
         private StatementNode ParseTestListStarExpr()
