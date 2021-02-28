@@ -5,9 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography.X509Certificates;
 using PythonCoreConcept.Parser.AST;
 
 namespace PythonCoreConcept.Parser
