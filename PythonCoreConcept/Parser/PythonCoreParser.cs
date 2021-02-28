@@ -1441,6 +1441,26 @@ namespace PythonCoreConcept.Parser
             throw new NotImplementedException();
         }
         
+        public StatementNode ParseParameterStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseTypedArgsList()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseTypedAssign()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseTfpDef()
+        {
+            throw new NotImplementedException();
+        }
+        
         private StatementNode ParseClass()
         {
             var startPos = _lexer.Position;
@@ -1568,14 +1588,20 @@ namespace PythonCoreConcept.Parser
                 case TokenKind.PyContinue:
                     return ParseContinueStmt();
                 case TokenKind.PyRaise:
+                    return ParseRaiseStmt();
                 case TokenKind.PyYield:
+                    return ParseYieldStmt();
                 case TokenKind.PyReturn:
+                    return ParseReturnStmt();
                 case TokenKind.PyImport:
                 case TokenKind.PyFrom:
+                    return ParseImportStmt();
                 case TokenKind.PyGlobal:
+                    return ParseGlobalStmt();
                 case TokenKind.PyNonLocal:
+                    return ParseNonLocalStmt();
                 case TokenKind.PyAssert:
-                    throw new NotImplementedException();
+                    return ParseAssertStmt();
                 default:
                     return ParseExprStmt();
             }
@@ -1803,13 +1829,85 @@ namespace PythonCoreConcept.Parser
             return new ContinueStatement(startPos, _lexer.Position, symbol);
         }
 
-
-
-        private StatementNode ParseDottedName()
+        public StatementNode ParseReturnStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseYieldStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseRaiseStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseImportStmt()
         {
             throw new NotImplementedException();
         }
 
+        public StatementNode ParseImportNameStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseImportFromStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseImportAsNameStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseDottedAsNameStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseImportAsNamesStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseDottedAsNamesStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        private StatementNode ParseDottedName()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseGlobalStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseNonLocalStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public StatementNode ParseAssertStmt()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public TypeNode ParseFuncType()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TypeNode ParseTypeList()
+        {
+            throw new NotImplementedException();
+        }
 
         public StatementNode ParseEvalInput()
         {
