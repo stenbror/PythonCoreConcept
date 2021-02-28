@@ -1437,17 +1437,252 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseFuncDef()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Missing Name of functiomn!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseParameterStmt();
+            Token symbol3 = null;
+            ExpressionNode right = null;
+            if (_lexer.CurSymbol.Kind == TokenKind.PyArrow)
+            {
+                symbol3 = _lexer.CurSymbol;
+                _lexer.Advance();
+                right = ParseTest();
+            }
+            if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                throw new SyntaxError(_lexer.Position, "Expecting ':' in function declaration!", _lexer.CurSymbol);
+            var symbol4 = _lexer.CurSymbol;
+            _lexer.Advance();
+            Token tc = null;
+            if (_lexer.CurSymbol.Kind == TokenKind.TypeComment)
+            {
+                tc = _lexer.CurSymbol;
+                _lexer.Advance();
+            }
+
+            var next = ParseFuncBodySuite();
+
+            return new FuncDefStatement(startPos, _lexer.Position, 
+                symbol, symbol2, left, symbol3, right, symbol4, tc, next);
         }
         
         private StatementNode ParseParameterStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            if (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen)
+                throw new SyntaxError(_lexer.Position, "Expecting '(' in function declaration!", _lexer.CurSymbol);
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            StatementNode right = null;
+            if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen) right = ParseTypedArgsList();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen)
+                throw new SyntaxError(_lexer.Position, "Expecting ')' in function declaration!", _lexer.CurSymbol);
+            var symbol2 = _lexer.CurSymbol;
+            _lexer.Advance();
+
+            return new ParametersStatement(startPos, _lexer.Position, symbol, right, symbol2);
+        }
+
+        private StatementNode ParseFuncBodySuite()
+        {
+            if (_lexer.CurSymbol.Kind == TokenKind.Newline)
+            {
+                var startPos = _lexer.Position;
+                var newline = _lexer.CurSymbol;
+                _lexer.Advance();
+
+                Token tc = null, nl = null; 
+
+                if (_lexer.CurSymbol.Kind == TokenKind.TypeComment)
+                {
+                    tc = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind != TokenKind.Newline)
+                        throw new SyntaxError(_lexer.Position, "Expecting Newline after typecomment!", _lexer.CurSymbol);
+                    nl = _lexer.CurSymbol;
+                    _lexer.Advance();
+                }
+                
+                if (_lexer.CurSymbol.Kind == TokenKind.Indent)
+                    throw new SyntaxError(_lexer.Position, "Missing indentation!", _lexer.CurSymbol);
+                var indent = _lexer.CurSymbol;
+                _lexer.Advance();
+                var nodes = new List<StatementNode>();
+                nodes.Add(ParseStmt());
+                while (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add(ParseStmt());
+                var dedent = _lexer.CurSymbol;
+                _lexer.Advance();
+
+                return new FuncBodySuiteStatement(startPos, _lexer.Position, 
+                    newline,  tc, nl, indent, nodes.ToArray(), dedent);
+            }
+
+            return ParseSimpleStmt();
         }
         
         private StatementNode ParseTypedArgsList()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<StatementNode>();
+            var separators = new List<Token>();
+            var tc = new List<Token>();
+            Token div = null;
+            Token mulOp = null, powerOp = null;
+            StatementNode mulNode = null, powerNode = null;
+
+            if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+            {
+                mulOp = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Missing NAME literal after '*' in argument list!", _lexer.CurSymbol);
+                mulNode = ParseTfpDef();
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add( _lexer.CurSymbol );
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyColon) continue;
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                    {
+                        powerOp = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                            throw new SyntaxError(_lexer.Position, "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                        powerNode = ParseTfpDef();
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        {
+                            separators.Add( _lexer.CurSymbol );
+                            _lexer.Advance();
+                        }
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                        continue;
+                    }
+                    nodes.Add( ParseTypedAssign() );
+                }
+
+            }
+            else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+            {
+                powerOp = _lexer.CurSymbol;
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                powerNode = ParseTfpDef();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add( _lexer.CurSymbol );
+                    _lexer.Advance();
+                }
+                if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                    throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+            }
+            else
+            {
+                nodes.Add( ParseTypedAssign() );
+                while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                {
+                    separators.Add(_lexer.CurSymbol);
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                    if (_lexer.CurSymbol.Kind == TokenKind.PyMul 
+                        || _lexer.CurSymbol.Kind == TokenKind.PyPower
+                        || _lexer.CurSymbol.Kind == TokenKind.PyColon
+                        || _lexer.CurSymbol.Kind == TokenKind.PyDiv) continue;
+                    nodes.Add( ParseTypedAssign() );
+                }
+
+                if (_lexer.CurSymbol.Kind == TokenKind.PyDiv)
+                {
+                    div = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var lastToken = div;
+
+                    if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
+                    {
+                        while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                        {
+                            separators.Add(_lexer.CurSymbol);
+                            lastToken = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyMul 
+                                || _lexer.CurSymbol.Kind == TokenKind.PyPower
+                                || _lexer.CurSymbol.Kind == TokenKind.PyColon) continue;
+                            nodes.Add(ParseTypedAssign());
+                            if (_lexer.CurSymbol.Kind != TokenKind.PyComma)
+                                return new TypedArgsListStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), div, mulOp, mulNode, powerOp, powerNode, tc.ToArray());
+                        }
+                        
+                        if (lastToken.Kind != TokenKind.PyComma)
+                            throw new SyntaxError(_lexer.Position, "Expected ',' in argument list!", _lexer.CurSymbol);
+
+                        if (_lexer.CurSymbol.Kind == TokenKind.PyMul)
+                        {
+                            mulOp = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                                throw new SyntaxError(_lexer.Position, "Missing NAME literal after '*' in argument list!", _lexer.CurSymbol);
+                            mulNode = ParseTfpDef();
+                            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            {
+                                separators.Add(_lexer.CurSymbol);
+                                _lexer.Advance();
+                                if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                    throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!",
+                                        _lexer.CurSymbol);
+                                if (_lexer.CurSymbol.Kind == TokenKind.PyColon) continue;
+                                if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                                {
+                                    powerOp = _lexer.CurSymbol;
+                                    _lexer.Advance();
+                                    if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                                        throw new SyntaxError(_lexer.Position,
+                                            "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                                    powerNode = ParseTfpDef();
+                                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                    {
+                                        separators.Add(_lexer.CurSymbol);
+                                        _lexer.Advance();
+                                    }
+
+                                    if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                        throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!",
+                                            _lexer.CurSymbol);
+                                    continue;
+                                }
+
+                                nodes.Add(ParseTypedAssign());
+                            }
+                        }
+                        else if (_lexer.CurSymbol.Kind == TokenKind.PyPower)
+                        {
+                            powerOp = _lexer.CurSymbol;
+                            _lexer.Advance();
+                            if (_lexer.CurSymbol.Kind != TokenKind.Name)
+                                throw new SyntaxError(_lexer.Position, "Missing NAME literal after '**' in argument list!", _lexer.CurSymbol);
+                            powerNode = ParseTfpDef();
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                            {
+                                separators.Add( _lexer.CurSymbol );
+                                _lexer.Advance();
+                            }
+                            if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+                                throw new SyntaxError(_lexer.Position, "Unexpected ',' in argument list!", _lexer.CurSymbol);
+                        }
+                    }
+                }
+            }
+            
+            return new TypedArgsListStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), div, mulOp, mulNode, powerOp, powerNode, tc.ToArray());
         }
         
         private StatementNode ParseTypedAssign()

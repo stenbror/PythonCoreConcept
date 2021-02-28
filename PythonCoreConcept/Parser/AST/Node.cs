@@ -354,13 +354,13 @@ namespace PythonCoreConcept.Parser.AST
     public record DecoratedStatement(UInt32 StartPos, UInt32 EndPos, StatementNode Left, StatementNode Right) : StatementNode(StartPos, EndPos);
     
     public record FuncDefStatement(UInt32 StartPos, UInt32 EndPos, 
-        Token Symbol1, Token Symbol2, StatementNode Left, Token Symbol3, Token Symbol4, Token Symbol5, Token Symbol6, StatementNode Right) 
+        Token Symbol1, Token Symbol2, StatementNode Left, Token Symbol3, ExpressionNode Right, Token Symbol5, Token Symbol6, StatementNode Next) 
         : StatementNode(StartPos, EndPos);
     
     public record ParametersStatement(UInt32 StartPos, UInt32 EndPos, Token Symbol1, StatementNode Right, Token Symbol2) : StatementNode(StartPos, EndPos);
     
     public record TypedArgsListStatement(UInt32 StartPos, UInt32 EndPos, 
-        StatementNode[] Nodes, Token[] Separators, Token Slash, Token Mul, ExpressionNode MulNode, Token Power, ExpressionNode PowerNode, Token TypeComment) 
+        StatementNode[] Nodes, Token[] Separators, Token Slash, Token Mul, StatementNode MulNode, Token Power, StatementNode PowerNode, Token[] TypeComment) 
         : StatementNode(StartPos, EndPos);
    
     public record TfpDefStatement(UInt32 StartPos, UInt32 EndPos, 
