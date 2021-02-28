@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography.X509Certificates;
 using PythonCoreConcept.Parser.AST;
 
 namespace PythonCoreConcept.Parser
@@ -1724,7 +1725,41 @@ namespace PythonCoreConcept.Parser
         
         private StatementNode ParseTestListStarExpr()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<ExpressionNode>();
+            var separators = new List<Token>();
+            nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseTest() );
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                switch (_lexer.CurSymbol.Kind)
+                {
+                    case TokenKind.PyPlusAssign:
+                    case TokenKind.PyMinusAssign:
+                    case TokenKind.PyMulAssign:
+                    case TokenKind.PyDivAssign:
+                    case TokenKind.PyPowerAssign:
+                    case TokenKind.PyFloorDivAssign:
+                    case TokenKind.PyBitAndAssign:
+                    case TokenKind.PyBitOrAssign:
+                    case TokenKind.PyBitXorAssign:
+                    case TokenKind.PyShiftLeftAssign:
+                    case TokenKind.PyShiftRightAssign:
+                    case TokenKind.PyMatriceAssign:
+                    case TokenKind.PyModuloAssign:
+                    case TokenKind.PyColon:
+                    case TokenKind.PyAssign:
+                    case TokenKind.PySemiColon:
+                    case TokenKind.Newline:
+                        break;
+                    default:
+                        nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseTest() );
+                        break;
+                }
+            }
+
+            return new TestListStarExprStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
 
 
@@ -1752,6 +1787,66 @@ namespace PythonCoreConcept.Parser
             return new EvalInputNode(startPos, _lexer.Position, right, newlines.ToArray(), _lexer.CurSymbol);
         }
 
+        public StatementNode ParseFileInput()
+        {
+            var startPos = _lexer.Position;
+            var nodes = new List<StatementNode>();
+            var newlines = new List<Token>();
+
+            while (_lexer.CurSymbol.Kind != TokenKind.EndOfFile)
+            {
+                if (_lexer.CurSymbol.Kind == TokenKind.Newline)
+                {
+                    newlines.Add(_lexer.CurSymbol);
+                    _lexer.Advance();
+                }
+                else
+                {
+                    nodes.Add( ParseStmt() );
+                }
+            }
+
+            return new FileInputNode(startPos, _lexer.Position, newlines.ToArray(), nodes.ToArray(), _lexer.CurSymbol);
+        }
+
+        public StatementNode ParseSingleInput()
+        {
+            var startPos = _lexer.Position;
+
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyIf:
+                case TokenKind.PyWhile:
+                case TokenKind.PyFor:
+                case TokenKind.PyTry:
+                case TokenKind.PyWith:
+                case TokenKind.PyAsync:
+                case TokenKind.PyDef:
+                case TokenKind.PyClass:
+                case TokenKind.PyMatrice:
+                {
+                    var right = ParseCompound();
+                    if (_lexer.CurSymbol.Kind != TokenKind.Newline)
+                        throw new SyntaxError(_lexer.Position, "Expecting NEWLINE after compound statement!",
+                            _lexer.CurSymbol);
+
+                    return new SingleInputNode(startPos, _lexer.Position, _lexer.CurSymbol, right);
+                }
+                case TokenKind.Newline:
+                    return new SingleInputNode(startPos, _lexer.Position, _lexer.CurSymbol, null);
+                default:
+                {
+                    var right = ParseSimpleStmt();
+                    return new SingleInputNode(startPos, _lexer.Position, null, right);
+                }
+            }
+        }
+
+        public TypeNode ParseFuncTypeInput()
+        {
+            throw new NotImplementedException();
+        }
+        
 #endregion
 
     }
