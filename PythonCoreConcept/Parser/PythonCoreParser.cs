@@ -1578,7 +1578,148 @@ namespace PythonCoreConcept.Parser
 
         private StatementNode ParseExprStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var left = ParseTestListStarExpr();
+            switch (_lexer.CurSymbol.Kind)
+            {
+                case TokenKind.PyPlusAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new PlusAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyMinusAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new MinusAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyMulAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new MulAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyMatriceAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new MatriceAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyDivAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new DivAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyModuloAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new ModuloAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyBitAndAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new BitAndAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyBitOrAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new BitOrAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyBitXorAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new BitXorAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyShiftLeftAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new ShiftLeftAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyShiftRightAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new ShiftRightAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyPowerAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new PowerAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyFloorDivAssign:
+                {
+                    var symbol = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    var right = _lexer.CurSymbol.Kind == TokenKind.PyYield ? ParseYieldExpr() : ParseTestList();
+                    return new FloorDivAssignStatement(startPos, _lexer.Position, left, symbol, right);
+                }
+                case TokenKind.PyColon:
+                    return ParseAnnAssign(startPos, left);
+                case TokenKind.PyAssign:
+                {
+                    var operators = new List<Token>();
+                    var nodes = new List<Node>();
+                    while (_lexer.CurSymbol.Kind == TokenKind.PyAssign)
+                    {
+                        operators.Add(_lexer.CurSymbol);
+                        var symbol = _lexer.CurSymbol;
+                        _lexer.Advance();
+                        nodes.Add(_lexer.CurSymbol.Kind == TokenKind.PyYield
+                            ? ParseYieldExpr() as Node
+                            : ParseTestListStarExpr() as Node);
+                    }
+
+                    Token tc = null;
+                    if (_lexer.CurSymbol.Kind == TokenKind.TypeComment)
+                    {
+                        tc = _lexer.CurSymbol;
+                        _lexer.Advance();
+                    }
+
+                    return new AssignStatement(startPos, _lexer.Position, left, operators.ToArray(), nodes.ToArray(), tc);
+                }
+                default:
+                    return left;
+            }
+        }
+
+        private StatementNode ParseAnnAssign(UInt32 startPos, StatementNode left)
+        {
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var right = ParseTest();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyAssign)
+            {
+                var symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                var next = _lexer.CurSymbol.Kind == TokenKind.PyYield
+                    ? ParseYieldExpr() as Node
+                    : ParseTestListStarExpr() as Node;
+                
+                return new AnnAssignStatement(startPos, _lexer.Position, left, symbol, right, symbol2, next);
+            }
+
+            return new AnnAssignStatement(startPos, _lexer.Position, left, symbol, right, null, null);
         }
         
         private StatementNode ParseTestListStarExpr()
