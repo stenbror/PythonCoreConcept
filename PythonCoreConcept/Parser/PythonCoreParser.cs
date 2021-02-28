@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using PythonCoreConcept.Parser.AST;
@@ -1886,17 +1887,68 @@ namespace PythonCoreConcept.Parser
         
         public StatementNode ParseGlobalStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<Token>();
+            var separators = new List<Token>();
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind == TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Expecting Name literal in global statement!", _lexer.CurSymbol);
+            nodes.Add(_lexer.CurSymbol);
+            _lexer.Advance();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Expecting Name literal in global statement!", _lexer.CurSymbol);
+                nodes.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+            }
+
+            return new GlobalStatement(startPos, _lexer.Position, symbol, nodes.ToArray(), separators.ToArray());
         }
         
         public StatementNode ParseNonLocalStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var nodes = new List<Token>();
+            var separators = new List<Token>();
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            if (_lexer.CurSymbol.Kind == TokenKind.Name)
+                throw new SyntaxError(_lexer.Position, "Expecting Name literal in nonlocal statement!", _lexer.CurSymbol);
+            nodes.Add(_lexer.CurSymbol);
+            _lexer.Advance();
+            while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                separators.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+                if (_lexer.CurSymbol.Kind == TokenKind.Name)
+                    throw new SyntaxError(_lexer.Position, "Expecting Name literal in nonlocal statement!", _lexer.CurSymbol);
+                nodes.Add(_lexer.CurSymbol);
+                _lexer.Advance();
+            }
+
+            return new NonlocalStatement(startPos, _lexer.Position, symbol, nodes.ToArray(), separators.ToArray());
         }
         
         public StatementNode ParseAssertStmt()
         {
-            throw new NotImplementedException();
+            var startPos = _lexer.Position;
+            var symbol = _lexer.CurSymbol;
+            _lexer.Advance();
+            var left = ParseTest();
+            if (_lexer.CurSymbol.Kind == TokenKind.PyComma)
+            {
+                var symbol2 = _lexer.CurSymbol;
+                _lexer.Advance();
+                var right = ParseTest();
+
+                return new AssertStatement(startPos, _lexer.Position, symbol, left, symbol2, right);
+            }
+            
+            return new AssertStatement(startPos, _lexer.Position, symbol, left, null, null);
         }
         
         public TypeNode ParseFuncType()
