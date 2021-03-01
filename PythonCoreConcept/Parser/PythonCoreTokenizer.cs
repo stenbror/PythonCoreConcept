@@ -53,6 +53,7 @@ namespace PythonCoreConcept.Parser
         private char[] _sourceBuffer;
         private UInt32 _index;
         private bool _atBol;
+        private Stack<TokenKind> _levelStack;
 
         public Token CurSymbol { get; private set; }
         public UInt32 Position { get; private set; }
@@ -65,6 +66,7 @@ namespace PythonCoreConcept.Parser
             _index = 0;
             CurSymbol = null;
             _atBol = true;
+            _levelStack = new Stack<TokenKind>();
         }
 
         public void Advance()
@@ -418,7 +420,37 @@ _letterQuote:
                 default:
                     throw new LexicalError(_index, $"Found '{_sourceBuffer[_index]}' in source code!");
             }
-                
+              
+            /* Finally we check for matching parenthezis if any */
+            if (CurSymbol.Kind == TokenKind.PyLeftParen || CurSymbol.Kind == TokenKind.PyLeftBracket ||
+                CurSymbol.Kind == TokenKind.PyLeftCurly)
+            {
+                _levelStack.Push(CurSymbol.Kind);
+            }
+            else if (CurSymbol.Kind == TokenKind.PyRightParen)
+            {
+                if (_levelStack.Peek() == TokenKind.PyLeftParen) _levelStack.Pop();
+                else
+                {
+                    throw new LexicalError(_index, "Inconsistent ')' parenthesis matching!");
+                }
+            }
+            else if (CurSymbol.Kind == TokenKind.PyRightBracket)
+            {
+                if (_levelStack.Peek() == TokenKind.PyLeftBracket) _levelStack.Pop();
+                else
+                {
+                    throw new LexicalError(_index, "Inconsistent ']' parenthesis matching!");
+                }
+            }
+            else if (CurSymbol.Kind == TokenKind.PyRightCurly)
+            {
+                if (_levelStack.Peek() == TokenKind.PyLeftCurly) _levelStack.Pop();
+                else
+                {
+                    throw new LexicalError(_index, "Inconsistent '}' parenthesis matching!");
+                }
+            }
         }
     }
 }
