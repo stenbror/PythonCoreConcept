@@ -401,7 +401,7 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyEqual'', new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyEqual, new Trivia[] { });
                     }
                     else
                     {
@@ -410,7 +410,8 @@ _letterQuote:
                     break;
                 case '!':
                     _index++;
-                    if (_sourceBuffer[_index] != '=') throw new LexicalError(_index, "Expecting '!=' but found only '!'")
+                    if (_sourceBuffer[_index] != '=')
+                        throw new LexicalError(_index, "Expecting '!=' but found only '!'");
                     _index++;
                     CurSymbol = new Token(Position, _index, TokenKind.PyNotEqual, new Trivia[] { });
                     break;
