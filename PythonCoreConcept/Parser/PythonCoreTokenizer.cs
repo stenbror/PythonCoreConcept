@@ -402,6 +402,19 @@ _letterQuote:
                     }
 
                     break;
+                case ':':
+                    _index++;
+                    if (_sourceBuffer[_index] == '=')
+                    {
+                        _index++;
+                        CurSymbol = new Token(Position, _index, TokenKind.PyColonAssign, new Trivia[] { });
+                    }
+                    else
+                    {
+                        CurSymbol = new Token(Position, _index, TokenKind.PyColon, new Trivia[] { });
+                    }
+
+                    break;
                 case '=':
                     _index++;
                     if (_sourceBuffer[_index] == '=')
