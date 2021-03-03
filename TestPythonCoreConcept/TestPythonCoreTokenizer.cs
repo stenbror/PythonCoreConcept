@@ -707,5 +707,92 @@ namespace TestPythonCoreConcept
             Assert.Equal(0ul, lex.CurSymbol.StartPos);
             Assert.Equal(3ul, lex.CurSymbol.EndPos);
         }
+        
+        [Fact]
+        public void TestOperatorOrDelimiter_LeftParen()
+        {
+            var lex = new PythonCoreTokenizer("(".ToCharArray());
+            Assert.Equal(TokenKind.PyLeftParen, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(1ul, lex.CurSymbol.EndPos);
+        }
+        
+        [Fact]
+        public void TestOperatorOrDelimiter_LeftBracket()
+        {
+            var lex = new PythonCoreTokenizer("[".ToCharArray());
+            Assert.Equal(TokenKind.PyLeftBracket, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(1ul, lex.CurSymbol.EndPos);
+        }
+        
+        [Fact]
+        public void TestOperatorOrDelimiter_LeftCurly()
+        {
+            var lex = new PythonCoreTokenizer("{".ToCharArray());
+            Assert.Equal(TokenKind.PyLeftCurly, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(1ul, lex.CurSymbol.EndPos);
+        }
+        
+        [Fact]
+        public void TestOperatorOrDelimiter_RightParen()
+        {
+            var lex = new PythonCoreTokenizer("()".ToCharArray());
+            lex.Advance();
+            Assert.Equal(TokenKind.PyRightParen, lex.CurSymbol.Kind);
+            Assert.Equal(1ul, lex.CurSymbol.StartPos);
+            Assert.Equal(2ul, lex.CurSymbol.EndPos);
+        }
+        
+        [Fact]
+        public void TestOperatorOrDelimiter_RightBracket()
+        {
+            var lex = new PythonCoreTokenizer("[]".ToCharArray());
+            lex.Advance();
+            Assert.Equal(TokenKind.PyRightBracket, lex.CurSymbol.Kind);
+            Assert.Equal(1ul, lex.CurSymbol.StartPos);
+            Assert.Equal(2ul, lex.CurSymbol.EndPos);
+        }
+        
+        [Fact]
+        public void TestOperatorOrDelimiter_RightCurly()
+        {
+            var lex = new PythonCoreTokenizer("{}".ToCharArray());
+            lex.Advance();
+            Assert.Equal(TokenKind.PyRightCurly, lex.CurSymbol.Kind);
+            Assert.Equal(1ul, lex.CurSymbol.StartPos);
+            Assert.Equal(2ul, lex.CurSymbol.EndPos);
+        }
+        
+        [Fact]
+        public void TestLiteralName_1()
+        {
+            var lex = new PythonCoreTokenizer("Test[".ToCharArray());
+            Assert.Equal(TokenKind.Name, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(4ul, lex.CurSymbol.EndPos);
+            Assert.Equal("Test", (lex.CurSymbol as NameToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralName_2()
+        {
+            var lex = new PythonCoreTokenizer("__init__".ToCharArray());
+            Assert.Equal(TokenKind.Name, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal("__init__", (lex.CurSymbol as NameToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralName_3()
+        {
+            var lex = new PythonCoreTokenizer("_x34a".ToCharArray());
+            Assert.Equal(TokenKind.Name, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(5ul, lex.CurSymbol.EndPos);
+            Assert.Equal("_x34a", (lex.CurSymbol as NameToken).Text);
+        }
     }
 }
