@@ -61,12 +61,16 @@ namespace PythonCoreConcept.Parser
         
         public PythonCoreTokenizer(char[] sourceCode)
         {
+            Array.Resize(ref sourceCode, sourceCode.Length + 1);
+            sourceCode[^1] = (char) 0x00;
             _sourceBuffer = sourceCode;
             Position = 0;
             _index = 0;
             CurSymbol = null;
             _atBol = true;
             _levelStack = new Stack<TokenKind>();
+            
+            this.Advance();
         }
 
         public void Advance()
