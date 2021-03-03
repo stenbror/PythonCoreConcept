@@ -150,6 +150,30 @@ _again:
             }
             
             /* Handle Period or start of Number */
+            if (_sourceBuffer[_index] == '.')
+            {
+                Position = _index;
+                _index++;
+                if (_sourceBuffer[_index] == '.')
+                {
+                    _index++;
+                    if (_sourceBuffer[_index] == '.')
+                    {
+                        _index++;
+                        CurSymbol = new Token(Position, _index, TokenKind.PyElipsis, new Trivia[] {});
+                        return;
+                    }
+
+                    _index--;
+                }
+                else if (!Char.IsDigit(_sourceBuffer[_index]))
+                {
+                    CurSymbol = new Token(Position, _index, TokenKind.PyDot, new Trivia[] {});
+                    return;
+                }
+
+                _index = Position;
+            }
             
             /* Handle Number */
             
