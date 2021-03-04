@@ -794,5 +794,275 @@ namespace TestPythonCoreConcept
             Assert.Equal(5ul, lex.CurSymbol.EndPos);
             Assert.Equal("_x34a", (lex.CurSymbol as NameToken).Text);
         }
+        
+        [Fact]
+        public void TestLiteralNumber_1()
+        {
+            var lex = new PythonCoreTokenizer("0b_111_011".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(10ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0b_111_011", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_2()
+        {
+            var lex = new PythonCoreTokenizer("0B_111_011".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(10ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0B_111_011", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_3()
+        {
+            var lex = new PythonCoreTokenizer("".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(0ul, lex.CurSymbol.EndPos);
+            Assert.Equal("", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_4()
+        {
+            var lex = new PythonCoreTokenizer("".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(0ul, lex.CurSymbol.EndPos);
+            Assert.Equal("", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_5()
+        {
+            var lex = new PythonCoreTokenizer("0B111011".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0B111011", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_6()
+        {
+            var lex = new PythonCoreTokenizer("0x_7f_8e".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0x_7f_8e", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_7()
+        {
+            var lex = new PythonCoreTokenizer("0X_7F_8e".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0X_7F_8e", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_8()
+        {
+            var lex = new PythonCoreTokenizer("0X7F8e".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(6ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0X7F8e", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_9()
+        {
+            var lex = new PythonCoreTokenizer("0o_71_14".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0o_71_14", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_10()
+        {
+            var lex = new PythonCoreTokenizer("0O_71_14".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0O_71_14", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_11()
+        {
+            var lex = new PythonCoreTokenizer("0o7114".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(6ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0o7114", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_12()
+        {
+            var lex = new PythonCoreTokenizer("0.".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(2ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0.", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_13()
+        {
+            var lex = new PythonCoreTokenizer("0._0".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(4ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0._0", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_14()
+        {
+            var lex = new PythonCoreTokenizer("0._0e-34j".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(9ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0._0e-34j", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_15()
+        {
+            var lex = new PythonCoreTokenizer("0._0E-3_4J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(10ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0._0E-3_4J", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_16()
+        {
+            var lex = new PythonCoreTokenizer("0._0E+3_4J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(10ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0._0E+3_4J", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_17()
+        {
+            var lex = new PythonCoreTokenizer("0._0E3_4J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(9ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0._0E3_4J", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_18()
+        {
+            var lex = new PythonCoreTokenizer("0.0J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(4ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0.0J", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_19()
+        {
+            var lex = new PythonCoreTokenizer("0.0".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(3ul, lex.CurSymbol.EndPos);
+            Assert.Equal("0.0", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_20()
+        {
+            var lex = new PythonCoreTokenizer(".0".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(2ul, lex.CurSymbol.EndPos);
+            Assert.Equal(".0", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_21()
+        {
+            var lex = new PythonCoreTokenizer(".0e1j".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(5ul, lex.CurSymbol.EndPos);
+            Assert.Equal(".0e1j", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_22()
+        {
+            var lex = new PythonCoreTokenizer(".0E1J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(5ul, lex.CurSymbol.EndPos);
+            Assert.Equal(".0E1J", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_23()
+        {
+            var lex = new PythonCoreTokenizer(".0E+1J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(6ul, lex.CurSymbol.EndPos);
+            Assert.Equal(".0E+1J", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_24()
+        {
+            var lex = new PythonCoreTokenizer(".0E-1J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(6ul, lex.CurSymbol.EndPos);
+            Assert.Equal(".0E-1J", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_25()
+        {
+            var lex = new PythonCoreTokenizer("1234.456".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal("1234.456", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_26()
+        {
+            var lex = new PythonCoreTokenizer("1_2_3_4.4_5_6".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(13ul, lex.CurSymbol.EndPos);
+            Assert.Equal("1_2_3_4.4_5_6", (lex.CurSymbol as NumberToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralNumber_27()
+        {
+            var lex = new PythonCoreTokenizer(".0E-1_1J".ToCharArray());
+            Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+            Assert.Equal(".0E-1_1J", (lex.CurSymbol as NumberToken).Text);
+        }
     }
 }
