@@ -176,6 +176,64 @@ _again:
             }
             
             /* Handle Number */
+            if (Char.IsDigit(_sourceBuffer[_index]) || _sourceBuffer[_index] == '.')
+            {
+                Position = _index;
+
+                if (_sourceBuffer[_index] == '0')
+                {
+                    _index++;
+                    if (_sourceBuffer[_index] == 'x' || _sourceBuffer[_index] == 'X')
+                    {
+                        
+                    }
+                    else if (_sourceBuffer[_index] == 'o' || _sourceBuffer[_index] == 'O')
+                    {
+                        
+                    }
+                    else if (_sourceBuffer[_index] == 'b' || _sourceBuffer[_index] == 'B')
+                    {
+                        _index++;
+                        do
+                        {
+                            if (_sourceBuffer[_index] == '_') _index++;
+                            if (_sourceBuffer[_index] != '0' && _sourceBuffer[_index] != '1')
+                            {
+                                if (Char.IsDigit(_sourceBuffer[_index]))
+                                {
+                                    throw new LexicalError(_index, "Expecting binary digit only!");
+                                }
+                                else
+                                {
+                                    throw new LexicalError(_index, "Expecting '0' or '1' in binary Number!");
+                                }
+                            }
+
+                            do
+                            {
+                                _index++;
+                            } while (_sourceBuffer[_index] == '0' || _sourceBuffer[_index] == '1');
+                        } while (_sourceBuffer[_index] == '_');
+
+                        if (Char.IsDigit(_sourceBuffer[_index]))
+                        {
+                            throw new LexicalError(_index, "Expecting binary digit only!");
+                        }
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+                else // Decimal
+                {
+                    
+                }
+                
+                var text = new string(_sourceBuffer[(int)Position .. (int)_index]);
+                CurSymbol = new NumberToken(Position, _index, new Trivia[]{}, text);
+                return;
+            }
             
 _letterQuote:
             /* Handle String */
