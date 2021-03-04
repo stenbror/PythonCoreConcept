@@ -1064,5 +1064,85 @@ namespace TestPythonCoreConcept
             Assert.Equal(8ul, lex.CurSymbol.EndPos);
             Assert.Equal(".0E-1_1J", (lex.CurSymbol as NumberToken).Text);
         }
+        
+        [Fact]
+        public void TestLiteralString_1()
+        {
+            var lex = new PythonCoreTokenizer("''".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(2ul, lex.CurSymbol.EndPos);
+            Assert.Equal("''", (lex.CurSymbol as StringToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralString_2()
+        {
+            var lex = new PythonCoreTokenizer("\"\"".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(2ul, lex.CurSymbol.EndPos);
+            Assert.Equal("\"\"", (lex.CurSymbol as StringToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralString_3()
+        {
+            var lex = new PythonCoreTokenizer("''''''".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(6ul, lex.CurSymbol.EndPos);
+            Assert.Equal("''''''", (lex.CurSymbol as StringToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralString_4()
+        {
+            var lex = new PythonCoreTokenizer("\"\"\"\"\"\"".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(6ul, lex.CurSymbol.EndPos);
+            Assert.Equal("\"\"\"\"\"\"", (lex.CurSymbol as StringToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralString_5()
+        {
+            var lex = new PythonCoreTokenizer("'''Hello, World!'''".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(19ul, lex.CurSymbol.EndPos);
+            Assert.Equal("'''Hello, World!'''", (lex.CurSymbol as StringToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralString_6()
+        {
+            var lex = new PythonCoreTokenizer("\"\"\"Hello, World!\"\"\"".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(19ul, lex.CurSymbol.EndPos);
+            Assert.Equal("\"\"\"Hello, World!\"\"\"", (lex.CurSymbol as StringToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralString_7()
+        {
+            var lex = new PythonCoreTokenizer("'Hello, World!'".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(15ul, lex.CurSymbol.EndPos);
+            Assert.Equal("'Hello, World!'", (lex.CurSymbol as StringToken).Text);
+        }
+        
+        [Fact]
+        public void TestLiteralString_8()
+        {
+            var lex = new PythonCoreTokenizer("\"Hello, World!\"".ToCharArray());
+            Assert.Equal(TokenKind.String, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(15ul, lex.CurSymbol.EndPos);
+            Assert.Equal("\"Hello, World!\"", (lex.CurSymbol as StringToken).Text);
+        }
     }
 }

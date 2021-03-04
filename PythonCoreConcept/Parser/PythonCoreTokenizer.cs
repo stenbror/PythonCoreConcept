@@ -383,6 +383,51 @@ _again:
             
 _letterQuote:
             /* Handle String */
+            if (_sourceBuffer[_index] == '\'' || _sourceBuffer[_index] == '\"')
+            {
+                var quote = _sourceBuffer[_index++];
+                var quoteSize = 1;
+                var quoteEndsize = 0;
+
+                if (_sourceBuffer[_index] == quote)
+                {
+                    _index++;
+                    if (_sourceBuffer[_index] == quote) quoteSize = 3;
+                    else quoteEndsize = 1;
+                }
+                else _index--;
+
+                while (quoteEndsize != quoteSize)
+                {
+                    _index++;
+                    if (_sourceBuffer[_index] == '\0')
+                    {
+                        
+                    }
+
+                    if (quoteSize == 1 && (_sourceBuffer[_index] == '\r' || _sourceBuffer[_index] == '\n'))
+                        throw new LexicalError(_index, "Newline inside single quote string!");
+                    if (quote == _sourceBuffer[_index])
+                    {
+                        quoteEndsize++;
+                        if (quoteEndsize == quoteSize) _index++;
+                    }
+                    else
+                    {
+                        quoteEndsize = 0;
+                        if (_sourceBuffer[_index] == '\\')
+                        {
+                            _index++;
+                            
+                            // Fix!
+                        }
+                    }
+                }
+
+                var text = new string(_sourceBuffer[(int)Position .. (int)_index]);
+                CurSymbol = new StringToken(Position, _index, new Trivia[]{}, text);
+                return;
+            }
             
             /* Handle Line continuation */
             
