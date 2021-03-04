@@ -73,6 +73,13 @@ namespace PythonCoreConcept.Parser
             this.Advance();
         }
 
+        private bool IsHexDigit(char ch)
+        {
+            if (_sourceBuffer[_index] >= 'a' && _sourceBuffer[_index] <= 'f') return true;
+            if (_sourceBuffer[_index] >= 'A' && _sourceBuffer[_index] <= 'F') return true;
+            return Char.IsDigit(ch);
+        }
+
         public void Advance()
         {
             bool isBlankline = false;
@@ -185,7 +192,19 @@ _again:
                     _index++;
                     if (_sourceBuffer[_index] == 'x' || _sourceBuffer[_index] == 'X')
                     {
-                        
+                        _index++;
+                        do
+                        {
+                            if (_sourceBuffer[_index] == '_') _index++;
+                            if (!IsHexDigit(_sourceBuffer[_index]))
+                                throw new LexicalError(_index, "Expecting hex digits!");
+                            do
+                            {
+                                _index++;
+                            } while (IsHexDigit(_sourceBuffer[_index]));
+
+                        } while (_sourceBuffer[_index] == '_');
+
                     }
                     else if (_sourceBuffer[_index] == 'o' || _sourceBuffer[_index] == 'O')
                     {
