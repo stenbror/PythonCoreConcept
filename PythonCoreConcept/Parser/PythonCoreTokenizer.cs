@@ -105,7 +105,7 @@ _again:
 
                 var sr = new string(_sourceBuffer[(int)Position .. (int)_index]);
 
-                if (sr.StartsWith("#type: "))
+                if (sr.StartsWith("# type: "))
                 {
                     CurSymbol = new TypeCommentToken(Position, _index, new Trivia[] {}, sr);
                     return;
@@ -430,6 +430,29 @@ _letterQuote:
             }
             
             /* Handle Line continuation */
+            if (_sourceBuffer[_index] == '\\')
+            {
+                // Add Trivia
+                _index++;
+                if (_sourceBuffer[_index] == '\r' || _sourceBuffer[_index] == '\n')
+                {
+                    if (_sourceBuffer[_index] == '\r')
+                    {
+                        _index++;
+                        // Add Trivia
+                    }
+
+                    if (_sourceBuffer[_index] == '\n')
+                    {
+                        // Add Trivia
+                        _index++;
+                    }
+                    
+                    goto _again;
+                }
+
+                throw new LexicalError(_index, "Line continuation must be followed by newline!");
+            }
             
             /* Handle Operators or Delimiters */
             switch (_sourceBuffer[_index])

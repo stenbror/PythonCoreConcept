@@ -1144,5 +1144,33 @@ namespace TestPythonCoreConcept
             Assert.Equal(15ul, lex.CurSymbol.EndPos);
             Assert.Equal("\"Hello, World!\"", (lex.CurSymbol as StringToken).Text);
         }
+        
+        [Fact]
+        public void TestLineContinuation_1()
+        {
+            var lex = new PythonCoreTokenizer("\\\r\nFalse".ToCharArray());
+            Assert.Equal(TokenKind.PyFalse, lex.CurSymbol.Kind);
+            Assert.Equal(3ul, lex.CurSymbol.StartPos);
+            Assert.Equal(8ul, lex.CurSymbol.EndPos);
+        }
+        
+        [Fact]
+        public void TestTypeComment()
+        {
+            var lex = new PythonCoreTokenizer("# type: (int) -> int\r\n".ToCharArray());
+            Assert.Equal(TokenKind.TypeComment, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(20ul, lex.CurSymbol.EndPos);
+            Assert.Equal("# type: (int) -> int", (lex.CurSymbol as TypeCommentToken).Text);
+        }
+        
+        [Fact]
+        public void TestEndOfFile()
+        {
+            var lex = new PythonCoreTokenizer("".ToCharArray());
+            Assert.Equal(TokenKind.EndOfFile, lex.CurSymbol.Kind);
+            Assert.Equal(0ul, lex.CurSymbol.StartPos);
+            Assert.Equal(0ul, lex.CurSymbol.EndPos);
+        }
     }
 }
