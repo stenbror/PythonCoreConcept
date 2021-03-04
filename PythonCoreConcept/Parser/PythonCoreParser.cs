@@ -163,6 +163,8 @@ namespace PythonCoreConcept.Parser
                 trailingPlain.Add(ParseTrailer());
             }
 
+            if (trailingPlain.Count == 0) return nodePlain; // Just the atom node returned.
+
             return new AtomExpr(startPos, _lexer.Position, null, nodePlain, trailingPlain.ToArray());
         }
 
@@ -676,6 +678,8 @@ namespace PythonCoreConcept.Parser
                     || _lexer.CurSymbol.Kind == TokenKind.EndOfFile) break;
                 nodes.Add( ParseTest() );
             }
+
+            if (nodes.Count == 1) return nodes[0];
 
             return new TestList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
