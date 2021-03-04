@@ -208,7 +208,34 @@ _again:
                     }
                     else if (_sourceBuffer[_index] == 'o' || _sourceBuffer[_index] == 'O')
                     {
+                        _index++;
+                        do
+                        {
+                            if (_sourceBuffer[_index] == '_') _index++;
+                            if (_sourceBuffer[_index] > '7' || _sourceBuffer[_index] < '0')
+                            {
+                                if (Char.IsDigit(_sourceBuffer[_index]))
+                                {
+                                    throw new LexicalError(_index, "Expecting octet digit only!");
+                                }
+                                else
+                                {
+                                    throw new LexicalError(_index, "Expecting digits between '0' and '7' in octet Number!");
+                                }
+                            }
+
+                            do
+                            {
+                                _index++;
+                            } while (_sourceBuffer[_index] >= '0' && _sourceBuffer[_index] <= '7');
+                            
+                        } while (_sourceBuffer[_index] == '_');
                         
+                        if (Char.IsDigit(_sourceBuffer[_index]))
+                        {
+                            throw new LexicalError(_index, "Expecting octet digit only!");
+                        }
+
                     }
                     else if (_sourceBuffer[_index] == 'b' || _sourceBuffer[_index] == 'B')
                     {
@@ -241,7 +268,58 @@ _again:
                     }
                     else
                     {
+                        var nonZero = false;
+                        if (_sourceBuffer[_index] != '.')
+                        {
+                            while (true)
+                            {
+                                while (Char.IsDigit(_sourceBuffer[_index])) _index++;
+                                if (_sourceBuffer[_index] != '_') break;
+                                _index++;
+                                if (!Char.IsDigit(_sourceBuffer[_index]))
+                                    throw new LexicalError(_index, "Expecting digits after '_' in Number!");
+                            }
+                        }
+
+                        if (_sourceBuffer[_index] == '.')
+                        {
+                            _index++;
+                            while (true)
+                            {
+                                while (Char.IsDigit(_sourceBuffer[_index])) _index++;
+                                if (_sourceBuffer[_index] != '_') break;
+                                _index++;
+                                if (!Char.IsDigit(_sourceBuffer[_index]))
+                                    throw new LexicalError(_index, "Expecting digits after '_' in Number!");
+                            }
+                        }
+
+                        if (_sourceBuffer[_index] == 'e' || _sourceBuffer[_index] == 'E')
+                        {
+                            _index++;
+                            if (_sourceBuffer[_index] == '+' || _sourceBuffer[_index] == '-')
+                            {
+                                _index++;
+                                if (!Char.IsDigit(_sourceBuffer[_index])) 
+                                    throw new LexicalError(_index, "Expecting digit after '+' or '-' in Number!");
+                            }
+                            else if (!Char.IsDigit(_sourceBuffer[_index]))
+                                throw new LexicalError(_index, "Expecting digit after 'e' in Number!");
+                            while (true)
+                            {
+                                while (Char.IsDigit(_sourceBuffer[_index])) _index++;
+                                if (_sourceBuffer[_index] != '_') break;
+                                _index++;
+                                if (!Char.IsDigit(_sourceBuffer[_index]))
+                                    throw new LexicalError(_index, "Expecting digits after '_' in Number!");
+                            }
+                        }
                         
+                        if (_sourceBuffer[_index] == 'j' || _sourceBuffer[_index] == 'J')
+                        {
+                            _index++;
+                        }
+                        else if (nonZero) throw new LexicalError(_index, "Unexpected digit found in Number!");
                     }
                 }
                 else // Decimal
