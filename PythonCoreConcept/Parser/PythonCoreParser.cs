@@ -17,8 +17,6 @@ namespace PythonCoreConcept.Parser
         public PythonCoreParser(PythonCoreTokenizer tokenizer)
         {
             _lexer = tokenizer;
-            
-            _lexer.Advance();
         }
         
 #region Expression rules
