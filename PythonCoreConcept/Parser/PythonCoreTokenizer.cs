@@ -324,7 +324,56 @@ _again:
                 }
                 else // Decimal
                 {
+                    if (_sourceBuffer[_index] != '.')
+                    {
+                        while (true)
+                        {
+                            while (Char.IsDigit(_sourceBuffer[_index])) _index++;
+                            if (_sourceBuffer[_index] != '_') break;
+                            _index++;
+                            if (!Char.IsDigit(_sourceBuffer[_index]))
+                                throw new LexicalError(_index, "Expecting digits after '_' in Number!");
+                        }
+                    }
+
+                    if (_sourceBuffer[_index] == '.')
+                    {
+                        _index++;
+                        while (true)
+                        {
+                            while (Char.IsDigit(_sourceBuffer[_index])) _index++;
+                            if (_sourceBuffer[_index] != '_') break;
+                            _index++;
+                            if (!Char.IsDigit(_sourceBuffer[_index]))
+                                throw new LexicalError(_index, "Expecting digits after '_' in Number!");
+                        }
+                    }
+
+                    if (_sourceBuffer[_index] == 'e' || _sourceBuffer[_index] == 'E')
+                    {
+                        _index++;
+                        if (_sourceBuffer[_index] == '+' || _sourceBuffer[_index] == '-')
+                        {
+                            _index++;
+                            if (!Char.IsDigit(_sourceBuffer[_index])) 
+                                throw new LexicalError(_index, "Expecting digit after '+' or '-' in Number!");
+                        }
+                        else if (!Char.IsDigit(_sourceBuffer[_index]))
+                            throw new LexicalError(_index, "Expecting digit after 'e' in Number!");
+                        while (true)
+                        {
+                            while (Char.IsDigit(_sourceBuffer[_index])) _index++;
+                            if (_sourceBuffer[_index] != '_') break;
+                            _index++;
+                            if (!Char.IsDigit(_sourceBuffer[_index]))
+                                throw new LexicalError(_index, "Expecting digits after '_' in Number!");
+                        }
+                    }
                     
+                    if (_sourceBuffer[_index] == 'j' || _sourceBuffer[_index] == 'J')
+                    {
+                        _index++;
+                    }
                 }
                 
                 var text = new string(_sourceBuffer[(int)Position .. (int)_index]);

@@ -818,21 +818,21 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestLiteralNumber_3()
         {
-            var lex = new PythonCoreTokenizer("".ToCharArray());
+            var lex = new PythonCoreTokenizer("1".ToCharArray());
             Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
             Assert.Equal(0ul, lex.CurSymbol.StartPos);
-            Assert.Equal(0ul, lex.CurSymbol.EndPos);
-            Assert.Equal("", (lex.CurSymbol as NumberToken).Text);
+            Assert.Equal(1ul, lex.CurSymbol.EndPos);
+            Assert.Equal("1", (lex.CurSymbol as NumberToken).Text);
         }
         
         [Fact]
         public void TestLiteralNumber_4()
         {
-            var lex = new PythonCoreTokenizer("".ToCharArray());
+            var lex = new PythonCoreTokenizer("10_000".ToCharArray());
             Assert.Equal(TokenKind.Number, lex.CurSymbol.Kind);
             Assert.Equal(0ul, lex.CurSymbol.StartPos);
-            Assert.Equal(0ul, lex.CurSymbol.EndPos);
-            Assert.Equal("", (lex.CurSymbol as NumberToken).Text);
+            Assert.Equal(6ul, lex.CurSymbol.EndPos);
+            Assert.Equal("10_000", (lex.CurSymbol as NumberToken).Text);
         }
         
         [Fact]
