@@ -73,6 +73,23 @@ namespace TestPythonCoreConcept
                 Assert.Equal(0u, node0.StartPos);
                 Assert.Equal(3u, node0.EndPos);
             }
+            
+            [Fact]
+            public void TestAtomName()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("__init__".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomName);
+                var node0 = (node as AtomName).Symbol;
+                Assert.Equal(TokenKind.Name, node0.Kind);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(8u, node0.EndPos);
+                Assert.Equal("__init__", node0.Text);
+            }
 
         }
     }
