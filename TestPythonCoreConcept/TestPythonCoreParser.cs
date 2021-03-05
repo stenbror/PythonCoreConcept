@@ -90,6 +90,66 @@ namespace TestPythonCoreConcept
                 Assert.Equal(8u, node0.EndPos);
                 Assert.Equal("__init__", node0.Text);
             }
+            
+            [Fact]
+            public void TestAtomNumber()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("45.7e-3J".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomNumber);
+                var node0 = (node as AtomNumber).Symbol;
+                Assert.Equal(TokenKind.Number, node0.Kind);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(8u, node0.EndPos);
+                Assert.Equal("45.7e-3J", node0.Text);
+            }
+            
+            [Fact]
+            public void TestAtomSingleString()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("'Hello, World!'".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomString);
+                var node0 = (node as AtomString).Symbol;
+                Assert.Equal(TokenKind.String, node0[0].Kind);
+                Assert.Equal(0u, node0[0].StartPos);
+                Assert.Equal(15u, node0[0].EndPos);
+                Assert.Equal("'Hello, World!'", node0[0].Text);
+            }
+            
+            [Fact]
+            public void TestAtomMultipleString()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("'Hello, World!''ax'".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomString);
+                var node0 = (node as AtomString).Symbol;
+                Assert.Equal(TokenKind.String, node0[0].Kind);
+                Assert.Equal(0u, node0[0].StartPos);
+                Assert.Equal(15u, node0[0].EndPos);
+                Assert.Equal("'Hello, World!'", node0[0].Text);
+                
+                Assert.Equal(TokenKind.String, node0[1].Kind);
+                Assert.Equal(15u, node0[1].StartPos);
+                Assert.Equal(19u, node0[1].EndPos);
+                Assert.Equal("'ax'", node0[1].Text);
+            }
+            
+            
+            
+            
 
         }
     }
