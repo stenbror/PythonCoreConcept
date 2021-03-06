@@ -147,10 +147,60 @@ namespace TestPythonCoreConcept
                 Assert.Equal("'ax'", node0[1].Text);
             }
             
+            [Fact]
+            public void TestAtomEmptyTuple()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("()".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(2u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right == null);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
             
+            [Fact]
+            public void TestAtomEmptyList()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("[]".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomList);
+                var node0 = (node as AtomList);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(2u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftBracket, node0.Symbol1.Kind);
+                Assert.True(node0.Right == null);
+                Assert.Equal(TokenKind.PyRightBracket, node0.Symbol2.Kind);
+            }
             
+            [Fact]
+            public void TestAtomEmptyCurly()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{}".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomDictionary);
+                var node0 = (node as AtomDictionary);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(2u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftCurly, node0.Symbol1.Kind);
+                Assert.True(node0.Right == null);
+                Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
+            }
             
-
         }
     }
 }

@@ -59,6 +59,7 @@ namespace PythonCoreConcept.Parser
                 }
                 case TokenKind.PyLeftParen:
                 {
+                    _lexer.Advance();
                     if (_lexer.CurSymbol.Kind == TokenKind.PyRightParen)
                     {
                         var symbol2 = _lexer.CurSymbol;
@@ -89,6 +90,7 @@ namespace PythonCoreConcept.Parser
                 }
                 case TokenKind.PyLeftBracket:
                 {
+                    _lexer.Advance();
                     if (_lexer.CurSymbol.Kind == TokenKind.PyRightBracket)
                     {
                         var symbol2 = _lexer.CurSymbol;
@@ -109,6 +111,7 @@ namespace PythonCoreConcept.Parser
                 }
                 case TokenKind.PyLeftCurly:
                 {
+                    _lexer.Advance();
                     if (_lexer.CurSymbol.Kind == TokenKind.PyRightCurly)
                     {
                         var symbol2 = _lexer.CurSymbol;
