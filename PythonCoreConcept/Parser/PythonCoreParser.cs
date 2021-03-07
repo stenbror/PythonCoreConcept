@@ -540,7 +540,7 @@ namespace PythonCoreConcept.Parser
             var nodes = new List<ExpressionNode>();
             var separators = new List<Token>();
             nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseNamedExpr() );
-            if (_lexer.CurSymbol.Kind == TokenKind.PyFor)
+            if (_lexer.CurSymbol.Kind == TokenKind.PyFor || _lexer.CurSymbol.Kind == TokenKind.PyAsync)
             {
                 nodes.Add( ParseCompFor());
             }

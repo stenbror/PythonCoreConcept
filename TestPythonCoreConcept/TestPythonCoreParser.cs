@@ -305,6 +305,31 @@ namespace TestPythonCoreConcept
             }
             
             [Fact]
+            public void TestAtomEmptyTupleAsyncForIf()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a async for b in c if d )".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(27u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right is TestListComp);
+                var node1 = (node0.Right as TestListComp);
+                Assert.True(node1.Separators.Length == 0);
+                Assert.True(node1.Nodes.Length == 2);
+                Assert.True(node1.Nodes[0] is AtomName);
+                var node2 = (node1.Nodes[1] as CompFor);
+                Assert.Equal(TokenKind.PyAsync, node2.Symbol1.Kind);
+                Assert.True(node2.Right is SyncCompFor);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
+            
+            [Fact]
             public void TestAtomEmptyTupleTestListComp()
             {
                 var parser = new PythonCoreParser(new PythonCoreTokenizer("( a,  )".ToArray()));
