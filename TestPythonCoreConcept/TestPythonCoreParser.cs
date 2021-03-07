@@ -640,6 +640,30 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomSetWithNamedExpr()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a , b, c := d )".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(17u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right is TestListComp);
+                var node1 = (node0.Right as TestListComp);
+                Assert.True(node1.Nodes.Length == 3);
+                Assert.True(node1.Separators.Length == 2);
+                Assert.True(node1.Nodes[0] is AtomName);
+                Assert.True(node1.Nodes[1] is AtomName);
+                Assert.True(node1.Nodes[2] is NamedExpr);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
+            
             
         }
     }
