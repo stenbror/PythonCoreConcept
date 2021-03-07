@@ -562,6 +562,8 @@ namespace PythonCoreConcept.Parser
                 }
             }
 
+            if (nodes.Count == 1 && separators.Count == 0) return nodes[0]; // Single node without commas return just the node.
+
             return new TestListComp(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
 
