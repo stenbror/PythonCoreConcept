@@ -226,6 +226,51 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomEmptyTupleTestListComp()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a,  )".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(7u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right is TestListComp);
+                var node1 = (node0.Right as TestListComp);
+                Assert.True(node1.Separators.Length == 1);
+                Assert.True(node1.Nodes.Length == 1);
+                Assert.Equal(TokenKind.PyComma, node1.Separators[0].Kind);
+                Assert.True(node1.Nodes[0] is AtomName);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
+
+            [Fact]
+            public void TestAtomEmptyListTestListComp()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("[ a,  ]".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomList);
+                var node0 = (node as AtomList);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(7u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftBracket, node0.Symbol1.Kind);
+                Assert.True(node0.Right is TestListComp);
+                var node1 = (node0.Right as TestListComp);
+                Assert.True(node1.Separators.Length == 1);
+                Assert.True(node1.Nodes.Length == 1);
+                Assert.Equal(TokenKind.PyComma, node1.Separators[0].Kind);
+                Assert.True(node1.Nodes[0] is AtomName);
+                Assert.Equal(TokenKind.PyRightBracket, node0.Symbol2.Kind);
+            }
             
             
         }
