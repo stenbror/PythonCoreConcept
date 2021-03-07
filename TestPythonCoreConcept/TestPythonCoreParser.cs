@@ -375,6 +375,30 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightBracket, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomSet()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a , b, c }".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomSet);
+                var node0 = (node as AtomSet);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(12u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftCurly, node0.Symbol1.Kind);
+                Assert.True(node0.Right is SetContainer);
+                var node1 = (node0.Right as SetContainer);
+                Assert.True(node1.Nodes.Length == 3);
+                Assert.True(node1.Separators.Length == 2);
+                Assert.True(node1.Nodes[0] is AtomName);
+                Assert.True(node1.Nodes[1] is AtomName);
+                Assert.True(node1.Nodes[2] is AtomName);
+                Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
+            }
+            
             
         }
     }
