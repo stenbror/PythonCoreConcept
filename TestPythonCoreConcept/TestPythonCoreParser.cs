@@ -664,6 +664,47 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomNameDotName()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a.b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomExpr);
+                var node0 = (node as AtomExpr);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(3u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right[0] is DotName);
+                var node1 = (node0.Right[0] as DotName);
+                Assert.Equal(TokenKind.PyDot, node1.Symbol.Kind);
+                Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
+            }
+            
+            [Fact]
+            public void TestAtomNameDotNameDotName()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a.b.c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomExpr);
+                var node0 = (node as AtomExpr);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(5u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right[0] is DotName);
+                var node1 = (node0.Right[0] as DotName);
+                Assert.Equal(TokenKind.PyDot, node1.Symbol.Kind);
+                Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
+                Assert.True(node0.Right[1] is DotName);
+            }
+            
             
         }
     }
