@@ -705,6 +705,27 @@ namespace TestPythonCoreConcept
                 Assert.True(node0.Right[1] is DotName);
             }
             
+            [Fact]
+            public void TestAtomNameCallEmpty()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a()".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomExpr);
+                var node0 = (node as AtomExpr);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(3u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right[0] is Call);
+                var node1 = (node0.Right[0] as Call);
+                Assert.Equal(TokenKind.PyLeftParen, node1.Symbol1.Kind);
+                Assert.True(node1.Right == null);
+                Assert.Equal(TokenKind.PyRightParen, node1.Symbol2.Kind);
+            }
+            
             
         }
     }
