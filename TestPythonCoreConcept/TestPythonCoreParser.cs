@@ -451,6 +451,41 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomSetWithFor()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a for a, b, in c }".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomSet);
+                var node0 = (node as AtomSet);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(21u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftCurly, node0.Symbol1.Kind);
+                Assert.True(node0.Right is SetContainer);
+                var node1 = (node0.Right as SetContainer);
+                Assert.True(node1.Nodes.Length == 2);
+                Assert.True(node1.Separators.Length == 0);
+                Assert.True(node1.Nodes[0] is StarExpr);
+                var node2 = (node1.Nodes[0] as StarExpr);
+                Assert.Equal(TokenKind.PyMul, node2.Symbol.Kind);
+                Assert.True(node2.Right is AtomName);
+                
+                Assert.True(node1.Nodes[1] is SyncCompFor);
+                var node3 = (node1.Nodes[1] as SyncCompFor);
+                Assert.True(node3.Left is ExprList);
+                var node4 = (node3.Left as ExprList);
+                Assert.True(node4.Nodes.Length == 2);
+                Assert.True(node4.Separators.Length == 2);
+                Assert.True(node4.Nodes[0] is AtomName);
+                Assert.True(node4.Nodes[1] is AtomName);
+                
+                Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
+            }
+            
             
         }
     }
