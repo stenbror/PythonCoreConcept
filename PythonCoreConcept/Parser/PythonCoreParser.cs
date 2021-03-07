@@ -785,14 +785,17 @@ namespace PythonCoreConcept.Parser
             var nodes = new List<ExpressionNode>();
             var separators = new List<Token>();
             nodes.Add( ParseArgumenter() );
+            
+            
             while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
             {
                 separators.Add(_lexer.CurSymbol);
                 _lexer.Advance();
                 if (_lexer.CurSymbol.Kind == TokenKind.PyRightParen) break;
-                nodes.Add( ParseArgumenter() );
+                nodes.Add(ParseArgumenter());
             }
             
+
             if (nodes.Count == 1 && separators.Count == 0) return nodes[0];
             
             return new ArgList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
