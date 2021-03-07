@@ -426,6 +426,31 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomSetWithTrailingComma()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a , }".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomSet);
+                var node0 = (node as AtomSet);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(8u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftCurly, node0.Symbol1.Kind);
+                Assert.True(node0.Right is SetContainer);
+                var node1 = (node0.Right as SetContainer);
+                Assert.True(node1.Nodes.Length == 1);
+                Assert.True(node1.Separators.Length == 1);
+                Assert.True(node1.Nodes[0] is StarExpr);
+                var node2 = (node1.Nodes[0] as StarExpr);
+                Assert.Equal(TokenKind.PyMul, node2.Symbol.Kind);
+                Assert.True(node2.Right is AtomName);
+                Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
+            }
+            
             
         }
     }
