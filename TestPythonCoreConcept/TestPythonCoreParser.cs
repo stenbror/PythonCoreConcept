@@ -726,6 +726,32 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightParen, node1.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomNameCallWithArg1()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b, c,)".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomExpr);
+                var node0 = (node as AtomExpr);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(8u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right[0] is Call);
+                var node1 = (node0.Right[0] as Call);
+                Assert.Equal(TokenKind.PyLeftParen, node1.Symbol1.Kind);
+                Assert.True(node1.Right is ArgList);
+                var node2 = (node1.Right as ArgList);
+                Assert.True(node2.Nodes.Length == 2);
+                Assert.True(node2.Separators.Length == 2);
+                Assert.True(node2.Nodes[0] is AtomName);
+                Assert.True(node2.Nodes[1] is AtomName);
+                Assert.Equal(TokenKind.PyRightParen, node1.Symbol2.Kind);
+            }
+            
             
         }
     }
