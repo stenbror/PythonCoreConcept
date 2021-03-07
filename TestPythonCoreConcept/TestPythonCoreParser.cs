@@ -566,6 +566,80 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomDictionaryWithPowerAndTrailingComma()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a, }".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomDictionary);
+                var node0 = (node as AtomDictionary);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(8u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftCurly, node0.Symbol1.Kind);
+                Assert.True(node0.Right is DictionaryContainer);
+                var node1 = (node0.Right as DictionaryContainer);
+                Assert.True(node1.Entries.Length == 1);
+                Assert.True(node1.Separators.Length == 1);
+                var node2 = (node1.Entries[0] as DictionaryKW);
+                Assert.Equal(TokenKind.PyPower, node2.Symbol.Kind);
+                Assert.True(node2.Right is AtomName);
+                Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
+            }
+            
+            [Fact]
+            public void TestAtomDictionaryWithPowerAndFor()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a for a in b }".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomDictionary);
+                var node0 = (node as AtomDictionary);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(18u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftCurly, node0.Symbol1.Kind);
+                Assert.True(node0.Right is DictionaryContainer);
+                var node1 = (node0.Right as DictionaryContainer);
+                Assert.True(node1.Entries.Length == 2);
+                Assert.True(node1.Separators.Length == 0);
+                var node2 = (node1.Entries[0] as DictionaryKW);
+                Assert.Equal(TokenKind.PyPower, node2.Symbol.Kind);
+                Assert.True(node2.Right is AtomName);
+                Assert.True(node1.Entries[1] is SyncCompFor);
+                Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
+            }
+            
+            [Fact]
+            public void TestAtomDictionaryWithPowerAndAsyncFor()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a async for a in b }".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomDictionary);
+                var node0 = (node as AtomDictionary);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(24u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftCurly, node0.Symbol1.Kind);
+                Assert.True(node0.Right is DictionaryContainer);
+                var node1 = (node0.Right as DictionaryContainer);
+                Assert.True(node1.Entries.Length == 2);
+                Assert.True(node1.Separators.Length == 0);
+                var node2 = (node1.Entries[0] as DictionaryKW);
+                Assert.Equal(TokenKind.PyPower, node2.Symbol.Kind);
+                Assert.True(node2.Right is AtomName);
+                Assert.True(node1.Entries[1] is CompFor);
+                Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
+            }
+            
             
         }
     }
