@@ -623,6 +623,8 @@ namespace PythonCoreConcept.Parser
                 if (_lexer.CurSymbol.Kind == TokenKind.PyRightBracket) break;
                 nodes.Add( ParseSubscript() );
             }
+            
+            if (nodes.Count == 1 && separators.Count == 0) return nodes[0];
 
             return new SubscriptList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
@@ -647,7 +649,7 @@ namespace PythonCoreConcept.Parser
                     }
                 }
             }
-
+            
             return new Subscript(startPos, _lexer.Position, first, one,second, two, third);
         }
 
@@ -664,6 +666,8 @@ namespace PythonCoreConcept.Parser
                 if (_lexer.CurSymbol.Kind == TokenKind.PyIn) break;
                 nodes.Add( _lexer.CurSymbol.Kind == TokenKind.PyMul ? ParseStarExpr() : ParseOr() );
             }
+            
+            if (nodes.Count == 1 && separators.Count == 0) return nodes[0];
 
             return new ExprList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
@@ -684,7 +688,7 @@ namespace PythonCoreConcept.Parser
                 nodes.Add( ParseTest() );
             }
 
-            if (nodes.Count == 1) return nodes[0];
+            if (nodes.Count == 1 && separators.Count == 0) return nodes[0];
 
             return new TestList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
@@ -788,6 +792,8 @@ namespace PythonCoreConcept.Parser
                 if (_lexer.CurSymbol.Kind == TokenKind.PyRightParen) break;
                 nodes.Add( ParseArgumenter() );
             }
+            
+            if (nodes.Count == 1 && separators.Count == 0) return nodes[0];
             
             return new ArgList(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }

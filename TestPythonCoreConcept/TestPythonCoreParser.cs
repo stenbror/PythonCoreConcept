@@ -247,6 +247,64 @@ namespace TestPythonCoreConcept
             }
             
             [Fact]
+            public void TestAtomEmptyTupleFor()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a for b in c )".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(16u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right is TestListComp);
+                var node1 = (node0.Right as TestListComp);
+                Assert.True(node1.Separators.Length == 0);
+                Assert.True(node1.Nodes.Length == 2);
+                Assert.True(node1.Nodes[0] is AtomName);
+                var node2 = (node1.Nodes[1] as SyncCompFor);
+                Assert.Equal(TokenKind.PyFor, node2.Symbol1.Kind);
+                Assert.Equal(TokenKind.PyIn, node2.Symbol2.Kind);
+                Assert.True(node2.Left is AtomName);
+                Assert.True(node2.Right is AtomName);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
+            
+            [Fact]
+            public void TestAtomEmptyTupleForIf()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a for b in c if d )".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(21u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right is TestListComp);
+                var node1 = (node0.Right as TestListComp);
+                Assert.True(node1.Separators.Length == 0);
+                Assert.True(node1.Nodes.Length == 2);
+                Assert.True(node1.Nodes[0] is AtomName);
+                var node2 = (node1.Nodes[1] as SyncCompFor);
+                Assert.Equal(TokenKind.PyFor, node2.Symbol1.Kind);
+                Assert.Equal(TokenKind.PyIn, node2.Symbol2.Kind);
+                Assert.True(node2.Left is AtomName);
+                Assert.True(node2.Right is AtomName);
+                Assert.True(node2.Next is CompIf);
+                var node3 = (node2.Next as CompIf);
+                Assert.Equal(TokenKind.PyIf, node3.Symbol1.Kind);
+                Assert.True(node3.Right is AtomName);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
+            
+            [Fact]
             public void TestAtomEmptyTupleTestListComp()
             {
                 var parser = new PythonCoreParser(new PythonCoreTokenizer("( a,  )".ToArray()));
