@@ -201,6 +201,33 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightCurly, node0.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomEmptyTupleYieldFrom()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( yield from a )".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(16u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right is YieldFrom);
+                var node1 = (node0.Right as YieldFrom);
+                Assert.Equal(TokenKind.PyYield, node1.Symbol1.Kind);
+                Assert.Equal(TokenKind.PyFrom, node1.Symbol2.Kind);
+                Assert.Equal(2u, node1.StartPos);
+                Assert.Equal(15u, node1.EndPos);
+                Assert.True(node1.Right is AtomName);
+                Assert.Equal("a", (node1.Right as AtomName).Symbol.Text);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
+            
+            
+            
         }
     }
 }
