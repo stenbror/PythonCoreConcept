@@ -588,12 +588,8 @@ namespace PythonCoreConcept.Parser
             }
             else if (symbol.Kind == TokenKind.PyLeftBracket)
             {
-                ExpressionNode right = null;
-                if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket)
-                {
-                    right = ParseSubscriptList();
-                }
-
+                ExpressionNode right = ParseSubscriptList();
+                
                 if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket) throw new SyntaxError(_lexer.Position, "Expecting ']' in index!", _lexer.CurSymbol);
                 var symbol2 = _lexer.CurSymbol;
                 _lexer.Advance();

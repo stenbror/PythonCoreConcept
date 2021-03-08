@@ -916,6 +916,33 @@ namespace TestPythonCoreConcept
                 Assert.Equal(TokenKind.PyRightParen, node1.Symbol2.Kind);
             }
             
+            [Fact]
+            public void TestAtomNameIndex1()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1]".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomExpr);
+                var node0 = (node as AtomExpr);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(4u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right[0] is Index);
+                var node1 = (node0.Right[0] as Index);
+                Assert.Equal(TokenKind.PyLeftBracket, node1.Symbol1.Kind);
+                Assert.True(node1.Right is Subscript);
+                var node2 = (node1.Right as Subscript);
+                Assert.True(node2.First is AtomNumber);
+                Assert.True(node2.Symbol1 == null);
+                Assert.True(node2.Two == null);
+                Assert.True(node2.Symbol2 == null);
+                Assert.True(node2.Three == null);
+                Assert.Equal(TokenKind.PyRightBracket, node1.Symbol2.Kind);
+            }
+            
             
         }
     }
