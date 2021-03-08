@@ -1257,6 +1257,22 @@ namespace TestPythonCoreConcept
                 Assert.True(node0.Right is AtomName);
             }
             
+            [Fact]
+            public void TestFactorSingleBitInvert()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("~a".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is UnaryBitInvert);
+                var node0 = (node as UnaryBitInvert);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(2u, node0.EndPos);
+                Assert.True(node0.Right is AtomName);
+            }
+            
             
         }
     }
