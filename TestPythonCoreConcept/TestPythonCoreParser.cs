@@ -227,6 +227,34 @@ namespace TestPythonCoreConcept
             }
             
             [Fact]
+            public void TestAtomEmptyTupleYield()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( yield a, b )".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AtomTuple);
+                var node0 = (node as AtomTuple);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(14u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLeftParen, node0.Symbol1.Kind);
+                Assert.True(node0.Right is YieldExpr);
+                var node1 = (node0.Right as YieldExpr);
+                Assert.Equal(TokenKind.PyYield, node1.Symbol1.Kind);
+                Assert.Equal(2u, node1.StartPos);
+                Assert.Equal(13u, node1.EndPos);
+                Assert.True(node1.Right is TestListStarExprStatement);
+                var node2 = (node1.Right as TestListStarExprStatement);
+                Assert.True(node2.Nodes.Length == 2);
+                Assert.True(node2.Separators.Length == 1);
+                Assert.True(node2.Nodes[0] is AtomName);
+                Assert.True(node2.Nodes[1] is AtomName);
+                Assert.Equal(TokenKind.PyRightParen, node0.Symbol2.Kind);
+            }
+            
+            [Fact]
             public void TestAtomEmptyTupleSingleEntry()
             {
                 var parser = new PythonCoreParser(new PythonCoreTokenizer("( a )".ToArray()));
