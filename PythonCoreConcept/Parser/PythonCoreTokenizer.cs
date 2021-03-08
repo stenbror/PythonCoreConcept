@@ -57,6 +57,7 @@ namespace PythonCoreConcept.Parser
 
         public Token CurSymbol { get; private set; }
         public UInt32 Position { get; private set; }
+        public UInt32 TabSize { get; set; }
         
         
         public PythonCoreTokenizer(char[] sourceCode)
@@ -72,7 +73,7 @@ namespace PythonCoreConcept.Parser
             
             this.Advance();
         }
-
+        
         private bool IsHexDigit(char ch)
         {
             if (_sourceBuffer[_index] >= 'a' && _sourceBuffer[_index] <= 'f') return true;
