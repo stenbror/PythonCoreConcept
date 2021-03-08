@@ -635,18 +635,18 @@ namespace PythonCoreConcept.Parser
             {
                 one = _lexer.CurSymbol;
                 _lexer.Advance();
-                if (_lexer.CurSymbol.Kind != TokenKind.PyColon && _lexer.CurSymbol.Kind != TokenKind.PyRightBracket)
+                if (_lexer.CurSymbol.Kind != TokenKind.PyComma &&
+                    _lexer.CurSymbol.Kind != TokenKind.PyColon &&
+                    _lexer.CurSymbol.Kind != TokenKind.PyRightBracket) second = ParseTest();
+                if (_lexer.CurSymbol.Kind == TokenKind.PyColon)
                 {
-                    second = ParseTest();
-                    if (_lexer.CurSymbol.Kind == TokenKind.PyColon)
-                    {
-                        two = _lexer.CurSymbol;
-                        _lexer.Advance();
-                        if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket) third = ParseTest();
-                    }
+                    two = _lexer.CurSymbol;
+                    _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind != TokenKind.PyComma && _lexer.CurSymbol.Kind != TokenKind.PyRightBracket)
+                        third = ParseTest();
                 }
             }
-            
+
             return new Subscript(startPos, _lexer.Position, first, one,second, two, third);
         }
 
