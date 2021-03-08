@@ -1205,6 +1205,26 @@ namespace TestPythonCoreConcept
                 Assert.True(node0.Right is AtomName);
             }
             
+            [Fact]
+            public void TestPowerMultiple()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ** b ** c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Power);
+                var node0 = (node as Power);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(11u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is Power);
+                var node1 = (node0.Right as Power);
+                Assert.True(node1.Left is AtomName);
+                Assert.True(node1.Right is AtomName);
+            }
+            
             
         }
     }
