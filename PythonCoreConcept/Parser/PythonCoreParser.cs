@@ -641,6 +641,7 @@ namespace PythonCoreConcept.Parser
                     if (_lexer.CurSymbol.Kind == TokenKind.PyColon)
                     {
                         two = _lexer.CurSymbol;
+                        _lexer.Advance();
                         if (_lexer.CurSymbol.Kind != TokenKind.PyRightBracket) third = ParseTest();
                     }
                 }
