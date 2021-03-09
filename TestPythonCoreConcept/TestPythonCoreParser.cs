@@ -1430,6 +1430,28 @@ namespace TestPythonCoreConcept
                 Assert.True(node0.Right is AtomName);
             }
             
+            [Fact]
+            public void TestArithMultiplePlusMinus()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a + b - c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Minus);
+                var node0 = (node as Minus);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(9u, node0.EndPos);
+                Assert.True(node0.Left is Plus);
+                Assert.True(node0.Right is AtomName);
+                var node1 = (node0.Left as Plus);
+                Assert.Equal(0u, node1.StartPos);
+                Assert.Equal(6u, node1.EndPos);
+                Assert.True(node1.Left is AtomName);
+                Assert.True(node1.Right is AtomName);
+            }
+            
             
         }
     }
