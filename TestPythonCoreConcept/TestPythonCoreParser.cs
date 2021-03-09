@@ -1289,6 +1289,23 @@ namespace TestPythonCoreConcept
                 Assert.True(node0.Right is UnaryMinus);
             }
             
+            [Fact]
+            public void TestTermSingleMul()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a * b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Mul);
+                var node0 = (node as Mul);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(5u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
             
         }
     }
