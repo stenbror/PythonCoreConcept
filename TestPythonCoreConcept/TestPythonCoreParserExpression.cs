@@ -1943,6 +1943,45 @@ namespace TestPythonCoreConcept
                 Assert.True(node1.Left is AtomName);
                 Assert.True(node1.Right is AtomName);
             }
+            
+            [Fact]
+            public void TestExpressionTest()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a if b else c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Test);
+                var node0 = (node as Test);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(13u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.Equal(TokenKind.PyIf, node0.Symbol1.Kind);
+                Assert.True(node0.Right is AtomName);
+                Assert.Equal(TokenKind.PyElse, node0.Symbol2.Kind);
+                Assert.True(node0.Next is AtomName);
+            }
+            
+            [Fact]
+            public void TestExpressionEvalInputTestList()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a, b, c \r\n\r\n".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 2);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is TestList);
+                var node0 = (node as TestList);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(8u, node0.EndPos);
+                Assert.True(node0.Nodes.Length == 3);
+                Assert.True(node0.Nodes[0] is AtomName);
+                Assert.True(node0.Nodes[1] is AtomName);
+                Assert.True(node0.Nodes[2] is AtomName);
+            }
         }
     }
 }
