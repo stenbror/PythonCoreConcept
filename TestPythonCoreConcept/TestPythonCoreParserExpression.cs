@@ -1865,6 +1865,40 @@ namespace TestPythonCoreConcept
                 Assert.Equal(9u, node0.EndPos);
                 Assert.True(node0.Right is NotTest);
             }
+            
+            [Fact]
+            public void TestAndTestSingle()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a and b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AndTest);
+                var node0 = (node as AndTest);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(7u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestAndTestMultiple()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a and b and c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is AndTest);
+                var node0 = (node as AndTest);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(13u, node0.EndPos);
+                Assert.True(node0.Left is AndTest);
+                Assert.True(node0.Right is AtomName);
+            }
         }
     }
 }
