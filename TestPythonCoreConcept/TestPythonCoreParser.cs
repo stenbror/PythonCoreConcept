@@ -1452,7 +1452,61 @@ namespace TestPythonCoreConcept
                 Assert.True(node1.Right is AtomName);
             }
             
+            [Fact]
+            public void TestTShiftSingleLeft()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a << b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is ShiftLeft);
+                var node0 = (node as ShiftLeft);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
             
+            [Fact]
+            public void TestTShiftSingleRight()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a >> b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is ShiftRight);
+                var node0 = (node as ShiftRight);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestShiftMultipleLeftRight()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a << b >> c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is ShiftRight);
+                var node0 = (node as ShiftRight);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(11u, node0.EndPos);
+                Assert.True(node0.Left is ShiftLeft);
+                Assert.True(node0.Right is AtomName);
+                var node1 = (node0.Left as ShiftLeft);
+                Assert.Equal(0u, node1.StartPos);
+                Assert.Equal(7u, node1.EndPos);
+                Assert.True(node1.Left is AtomName);
+                Assert.True(node1.Right is AtomName);
+            }
         }
     }
 }
