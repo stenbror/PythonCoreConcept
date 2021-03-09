@@ -1624,6 +1624,159 @@ namespace TestPythonCoreConcept
                 Assert.Equal(0u, node1.StartPos);
                 Assert.Equal(6u, node1.EndPos);
             }
+            
+            [Fact]
+            public void TestCompareSingleLess()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a < b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareLess);
+                var node0 = (node as CompareLess);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(5u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleGreater()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a > b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareGreater);
+                var node0 = (node as CompareGreater);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(5u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleLessEqual()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a <= b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareLessEqual);
+                var node0 = (node as CompareLessEqual);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleGreaterEqual()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a >= b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareGreaterEqual);
+                var node0 = (node as CompareGreaterEqual);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleEqual()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a == b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareEqual);
+                var node0 = (node as CompareEqual);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleNotEqual()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a != b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareNotEqual);
+                var node0 = (node as CompareNotEqual);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleNotEqualLegacy()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a <> b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareNotEqual);
+                var node0 = (node as CompareNotEqual);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleIn()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a in b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareIn);
+                var node0 = (node as CompareIn);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestCompareSingleIs()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a is b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is CompareIs);
+                var node0 = (node as CompareIs);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(6u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
         }
     }
 }
