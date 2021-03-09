@@ -1340,6 +1340,23 @@ namespace TestPythonCoreConcept
                 Assert.True(node0.Right is AtomName);
             }
             
+            [Fact]
+            public void TestTermSingleModulo()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a % b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Modulo);
+                var node0 = (node as Modulo);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(5u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
             
         }
     }
