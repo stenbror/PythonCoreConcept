@@ -1546,6 +1546,84 @@ namespace TestPythonCoreConcept
                 Assert.Equal(0u, node1.StartPos);
                 Assert.Equal(6u, node1.EndPos);
             }
+            
+            [Fact]
+            public void TestSingleBitXor()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ^ b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is BitXor);
+                var node0 = (node as BitXor);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(5u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestMultipleBitXor()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ^ b ^ c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is BitXor);
+                var node0 = (node as BitXor);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(9u, node0.EndPos);
+                Assert.True(node0.Left is BitXor);
+                Assert.True(node0.Right is AtomName);
+                var node1 = (node0.Left as BitXor);
+                Assert.True(node1.Left is AtomName);
+                Assert.True(node1.Right is AtomName);
+                Assert.Equal(0u, node1.StartPos);
+                Assert.Equal(6u, node1.EndPos);
+            }
+            
+            [Fact]
+            public void TestSingleBitOr()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a | b".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is BitOr);
+                var node0 = (node as BitOr);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(5u, node0.EndPos);
+                Assert.True(node0.Left is AtomName);
+                Assert.True(node0.Right is AtomName);
+            }
+            
+            [Fact]
+            public void TestMultipleBitOr()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a | b | c".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is BitOr);
+                var node0 = (node as BitOr);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(9u, node0.EndPos);
+                Assert.True(node0.Left is BitOr);
+                Assert.True(node0.Right is AtomName);
+                var node1 = (node0.Left as BitOr);
+                Assert.True(node1.Left is AtomName);
+                Assert.True(node1.Right is AtomName);
+                Assert.Equal(0u, node1.StartPos);
+                Assert.Equal(6u, node1.EndPos);
+            }
         }
     }
 }
