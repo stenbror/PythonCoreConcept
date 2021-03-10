@@ -2436,6 +2436,7 @@ namespace PythonCoreConcept.Parser
             }
             else
             {
+                nodes.Add( ParseTest() );
                 while (_lexer.CurSymbol.Kind == TokenKind.PyComma)
                 {
                     separators.Add(_lexer.CurSymbol);
