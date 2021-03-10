@@ -1,5 +1,4 @@
 
-using System.Linq;
 using Xunit;
 using PythonCoreConcept.Parser;
 using PythonCoreConcept.Parser.AST;
@@ -13,7 +12,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomFalse()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("False".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("False".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -29,7 +28,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNone()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("None".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("None".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -45,7 +44,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomTrue()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("True".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("True".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -61,7 +60,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomElipsis()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("...".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("...".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -77,7 +76,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomName()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("__init__".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("__init__".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -94,7 +93,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNumber()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("45.7e-3J".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("45.7e-3J".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -111,7 +110,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomSingleString()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("'Hello, World!'".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("'Hello, World!'".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -128,7 +127,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomMultipleString()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("'Hello, World!''ax'".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("'Hello, World!''ax'".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -150,7 +149,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTuple()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("()".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("()".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -168,7 +167,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyList()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("[]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("[]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -186,7 +185,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyCurly()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{}".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{}".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -204,7 +203,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTupleYieldFrom()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( yield from a )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( yield from a )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -229,7 +228,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTupleYield()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( yield a, b )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( yield a, b )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -257,7 +256,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTupleSingleEntry()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -277,7 +276,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTupleFor()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a for b in c )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a for b in c )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -304,7 +303,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTupleForIf()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a for b in c if d )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a for b in c if d )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -335,7 +334,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTupleAsyncForIf()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a async for b in c if d )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a async for b in c if d )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -360,7 +359,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyTupleTestListComp()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a,  )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a,  )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -383,7 +382,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomEmptyListTestListComp()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("[ a,  ]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("[ a,  ]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -406,7 +405,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomSet()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a , b, c }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a , b, c }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -430,7 +429,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomSetWithMul()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a , *b, c }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a , *b, c }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -457,7 +456,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomSetWithTrailingComma()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a , }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a , }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -482,7 +481,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomSetWithFor()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a for a, b, in c }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a for a, b, in c }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -517,7 +516,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomSetWithAsync()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a async for a, b, in c }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ *a async for a, b, in c }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -543,7 +542,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomDictionary()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a : b , c : d, e : f }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a : b , c : d, e : f }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -571,7 +570,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomDictionaryWithPower()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a : b , **c }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ a : b , **c }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -597,7 +596,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomDictionaryWithPowerAndTrailingComma()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a, }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a, }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -621,7 +620,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomDictionaryWithPowerAndFor()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a for a in b }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a for a in b }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -646,7 +645,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomDictionaryWithPowerAndAsyncFor()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a async for a in b }".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("{ **a async for a in b }".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -671,7 +670,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomSetWithNamedExpr()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a , b, c := d )".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("( a , b, c := d )".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -695,7 +694,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameDotName()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a.b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a.b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -715,7 +714,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameDotNameDotName()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a.b.c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a.b.c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -736,7 +735,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallEmpty()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a()".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a()".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -757,7 +756,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallWithArg1()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b, c,)".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b, c,)".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -783,7 +782,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallWithArg2()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(*b, c)".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(*b, c)".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -811,7 +810,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallWithArg3()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(**b, c)".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(**b, c)".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -839,7 +838,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallWithArg4()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b := c, 1)".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b := c, 1)".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -868,7 +867,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallWithArg5()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b = c, 1)".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b = c, 1)".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -897,7 +896,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallWithArg6()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b for c in d)".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b for c in d)".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -922,7 +921,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameCallWithArg7()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b async for c in d)".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a(b async for c in d)".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -947,7 +946,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex1()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -974,7 +973,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex2()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1:10]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1:10]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1001,7 +1000,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex3()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1:10:5]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1:10:5]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1028,7 +1027,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex4()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[:10:5]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[:10:5]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1055,7 +1054,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex5()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[::5]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[::5]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1082,7 +1081,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex6()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[::]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[::]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1109,7 +1108,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex7()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[:]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[:]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1136,7 +1135,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex8()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1:10, 2, 3, ]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a[1:10, 2, 3, ]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1163,7 +1162,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAtomNameIndex9()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("await a[1]".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("await a[1]".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1191,7 +1190,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestPowerSingle()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ** b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ** b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1208,7 +1207,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestPowerMultiple()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ** b ** c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ** b ** c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1228,7 +1227,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestFactorSinglePlus()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("+a".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("+a".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1244,7 +1243,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestFactorSingleMinus()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("-a".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("-a".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1260,7 +1259,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestFactorSingleBitInvert()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("~a".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("~a".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1276,7 +1275,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestFactorMultipleMinus()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("--a".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("--a".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1292,7 +1291,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTermSingleMul()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a * b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a * b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1309,7 +1308,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTermSingleMatrice()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a @ b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a @ b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1326,7 +1325,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTermSingleDiv()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a / b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a / b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1343,7 +1342,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTermSingleModulo()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a % b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a % b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1360,7 +1359,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTermSingleFloorDiv()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a // b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a // b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1377,7 +1376,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTermMultipleDiv()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a / b * c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a / b * c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1399,7 +1398,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTArithSinglePlus()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a + b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a + b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1416,7 +1415,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTArithSingleMinus()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a - b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a - b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1433,7 +1432,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestArithMultiplePlusMinus()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a + b - c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a + b - c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1455,7 +1454,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTShiftSingleLeft()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a << b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a << b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1472,7 +1471,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestTShiftSingleRight()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a >> b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a >> b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1489,7 +1488,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestShiftMultipleLeftRight()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a << b >> c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a << b >> c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1511,7 +1510,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestSingleBitAnd()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a & b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a & b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1528,7 +1527,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestMultipleBitAnd()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a & b & c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a & b & c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1550,7 +1549,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestSingleBitXor()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ^ b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ^ b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1567,7 +1566,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestMultipleBitXor()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ^ b ^ c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a ^ b ^ c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1589,7 +1588,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestSingleBitOr()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a | b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a | b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1606,7 +1605,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestMultipleBitOr()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a | b | c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a | b | c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1628,7 +1627,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleLess()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a < b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a < b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1645,7 +1644,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleGreater()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a > b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a > b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1662,7 +1661,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleLessEqual()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a <= b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a <= b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1679,7 +1678,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleGreaterEqual()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a >= b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a >= b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1696,7 +1695,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleEqual()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a == b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a == b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1713,7 +1712,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleNotEqual()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a != b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a != b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1730,7 +1729,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleNotEqualLegacy()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a <> b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a <> b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1747,7 +1746,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleIn()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a in b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a in b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1764,7 +1763,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleIs()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a is b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a is b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1781,7 +1780,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleIsNot()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a is not b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a is not b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1798,7 +1797,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareSingleNotIn()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a not in b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a not in b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1815,7 +1814,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestCompareMultipleLessGreater()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a < b > c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a < b > c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1837,7 +1836,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestNotTestSingle()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("not a".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("not a".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1853,7 +1852,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestNotTestMultiple()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("not not a".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("not not a".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1869,7 +1868,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAndTestSingle()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a and b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a and b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1886,7 +1885,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestAndTestMultiple()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a and b and c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a and b and c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1908,7 +1907,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestOrTestSingle()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a or b".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a or b".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1925,7 +1924,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestOrTestMultiple()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a or b or c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a or b or c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1947,7 +1946,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestExpressionTest()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a if b else c".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a if b else c".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1967,7 +1966,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestExpressionEvalInputTestList()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("a, b, c \r\n\r\n".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("a, b, c \r\n\r\n".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
@@ -1986,7 +1985,7 @@ namespace TestPythonCoreConcept
             [Fact]
             public void TestLambdaNoParameters()
             {
-                var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda: x".ToArray()));
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda: x".ToCharArray()));
                 var rootNode = parser.ParseEvalInput();
                 Assert.True(rootNode is EvalInputNode);
                 Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
