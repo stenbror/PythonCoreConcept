@@ -1982,6 +1982,25 @@ namespace TestPythonCoreConcept
                 Assert.True(node0.Nodes[1] is AtomName);
                 Assert.True(node0.Nodes[2] is AtomName);
             }
+            
+            [Fact]
+            public void TestLambdaNoParameters()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda: x".ToArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Lambda);
+                var node0 = (node as Lambda);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(9u, node0.EndPos);
+                Assert.True(node0.Left == null);
+                Assert.Equal(TokenKind.PyLambda, node0.Symbol1.Kind);
+                Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
+                Assert.True(node0.Right is AtomName);
+            }
         }
     }
 }
