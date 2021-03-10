@@ -2564,7 +2564,7 @@ namespace PythonCoreConcept.Parser
                 _lexer.Advance();
             }
 
-            if (_lexer.CurSymbol.Kind == TokenKind.EndOfFile)
+            if (_lexer.CurSymbol.Kind != TokenKind.EndOfFile)
                 throw new SyntaxError(_lexer.Position, "Expecting end of file!", _lexer.CurSymbol);
 
             return new TypeInput(startPos, _lexer.Position, right, newlines.ToArray(), _lexer.CurSymbol);
