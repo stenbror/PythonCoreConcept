@@ -2153,6 +2153,94 @@ namespace TestPythonCoreConcept
                 var node2 = (node1.Nodes[0] as VfpDefAssignStatement);
                 Assert.True(node2.Left is NameToken);
             }
+            
+            [Fact]
+            public void TestLambdaParameters7()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda a, b, c, /, d, *f, g, h: x".ToCharArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Lambda);
+                var node0 = (node as Lambda);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(33u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLambda, node0.Symbol1.Kind);
+                Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
+                Assert.True(node0.Right is AtomName);
+                Assert.True(node0.Left is VarArgsListStatement);
+                var node1 = (node0.Left as VarArgsListStatement);
+                Assert.True(node1.Nodes.Length == 6);
+                Assert.True(node1.Separators.Length == 7);
+                Assert.Equal(TokenKind.PyDiv, node1.Slash.Kind);
+                Assert.Equal(TokenKind.PyMul, node1.Mul.Kind);
+                Assert.True(node1.MulNode is NameToken);
+                Assert.True(node1.Nodes[0] is VfpDefAssignStatement);
+                var node2 = (node1.Nodes[0] as VfpDefAssignStatement);
+                Assert.True(node2.Left is NameToken);
+            }
+            
+            [Fact]
+            public void TestLambdaParameters8()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda a, b, c, /, d, *f, g, h, **i: x".ToCharArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Lambda);
+                var node0 = (node as Lambda);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(38u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLambda, node0.Symbol1.Kind);
+                Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
+                Assert.True(node0.Right is AtomName);
+                Assert.True(node0.Left is VarArgsListStatement);
+                var node1 = (node0.Left as VarArgsListStatement);
+                Assert.True(node1.Nodes.Length == 6);
+                Assert.True(node1.Separators.Length == 8);
+                Assert.Equal(TokenKind.PyDiv, node1.Slash.Kind);
+                Assert.Equal(TokenKind.PyMul, node1.Mul.Kind);
+                Assert.Equal(TokenKind.PyPower, node1.Power.Kind);
+                Assert.True(node1.MulNode is NameToken);
+                Assert.True(node1.PowerNode is NameToken);
+                Assert.True(node1.Nodes[0] is VfpDefAssignStatement);
+                var node2 = (node1.Nodes[0] as VfpDefAssignStatement);
+                Assert.True(node2.Left is NameToken);
+            }
+            
+            [Fact]
+            public void TestLambdaParameters9()
+            {
+                var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda a, b, c, /, d, *f, g, h, **i,: x".ToCharArray()));
+                var rootNode = parser.ParseEvalInput();
+                Assert.True(rootNode is EvalInputNode);
+                Assert.Equal(TokenKind.EndOfFile, (rootNode as EvalInputNode).Eof.Kind);
+                Assert.True((rootNode as EvalInputNode).Newlines.Length == 0);
+                var node = (rootNode as EvalInputNode).Right;
+                Assert.True(node is Lambda);
+                var node0 = (node as Lambda);
+                Assert.Equal(0u, node0.StartPos);
+                Assert.Equal(39u, node0.EndPos);
+                Assert.Equal(TokenKind.PyLambda, node0.Symbol1.Kind);
+                Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
+                Assert.True(node0.Right is AtomName);
+                Assert.True(node0.Left is VarArgsListStatement);
+                var node1 = (node0.Left as VarArgsListStatement);
+                Assert.True(node1.Nodes.Length == 6);
+                Assert.True(node1.Separators.Length == 9);
+                Assert.Equal(TokenKind.PyDiv, node1.Slash.Kind);
+                Assert.Equal(TokenKind.PyMul, node1.Mul.Kind);
+                Assert.Equal(TokenKind.PyPower, node1.Power.Kind);
+                Assert.True(node1.MulNode is NameToken);
+                Assert.True(node1.PowerNode is NameToken);
+                Assert.True(node1.Nodes[0] is VfpDefAssignStatement);
+                var node2 = (node1.Nodes[0] as VfpDefAssignStatement);
+                Assert.True(node2.Left is NameToken);
+            }
         }
     }
 }
