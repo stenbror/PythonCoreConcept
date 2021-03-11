@@ -72,7 +72,26 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyPass, node2.Symbol.Kind);
             Assert.True(node2.StartPos == 5u);
             Assert.True(node2.EndPos == 9u);
-
+        }
+        
+        [Fact]
+        public void TestMultipleSimpleStmtWithNewlines()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("pass;\npass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 2);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Separators.Length == 1);
+            Assert.True(node.Nodes[1] is SimpleStatement);
+            var node1 = (node.Nodes[1] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node1.Symbol.Kind);
+            Assert.True(node1.Separators.Length == 0);
         }
     }
 }
