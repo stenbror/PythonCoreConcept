@@ -93,5 +93,25 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.Newline, node1.Symbol.Kind);
             Assert.True(node1.Separators.Length == 0);
         }
+        
+        [Fact]
+        public void TestMultipleSimpleStmtWithAdditionalNewlines()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("pass;\n\npass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 1);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 2);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Separators.Length == 1);
+            Assert.True(node.Nodes[1] is SimpleStatement);
+            var node1 = (node.Nodes[1] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node1.Symbol.Kind);
+            Assert.True(node1.Separators.Length == 0);
+        }
     }
 }
