@@ -1836,6 +1836,7 @@ namespace PythonCoreConcept.Parser
             while (_lexer.CurSymbol.Kind == TokenKind.PySemiColon)
             {
                 separators.Add( _lexer.CurSymbol );
+                _lexer.Advance();
                 if (_lexer.CurSymbol.Kind != TokenKind.Newline) nodes.Add( ParseSmallStmt() );
             }
 
