@@ -1843,7 +1843,7 @@ namespace PythonCoreConcept.Parser
                 throw new SyntaxError(_lexer.Position, "Expecting newline or ';' in statement kist!", _lexer.CurSymbol);
             var newline = _lexer.CurSymbol;
             _lexer.Advance();
-
+            
             return new SimpleStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray(), newline);
         }
 
@@ -2060,7 +2060,7 @@ namespace PythonCoreConcept.Parser
                         break;
                 }
             }
-
+            
             return new TestListStarExprStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
 
