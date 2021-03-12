@@ -568,6 +568,41 @@ namespace TestPythonCoreConcept
             Assert.True(node3.Nodes[0] is AtomNumber);
         }
         
+        [Fact]
+        public void TestMultipleAssignStmtWithTYpeComment()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("a = b = c = 1 # type: int -> int\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes[0] is AssignStatement);
+            var node1 = (node0.Nodes[0] as AssignStatement);
+            Assert.Equal(TokenKind.PyAssign, node1.Symbols[0].Kind);
+            Assert.True(node1.StartPos == 0u);
+            Assert.True(node1.EndPos == 32u);
+            Assert.True(node1.Left is TestListStarExprStatement);
+            var node2 = (node1.Left as TestListStarExprStatement);
+            Assert.True(node2.Nodes.Length == 1);
+            Assert.True(node2.Separators.Length == 0);
+            Assert.True(node2.Nodes[0] is AtomName);
+            Assert.True(node1.RightNodes[0] is TestListStarExprStatement);
+            Assert.True(node1.RightNodes[1] is TestListStarExprStatement);
+            Assert.True(node1.RightNodes[2] is TestListStarExprStatement);
+            var node3 = (node1.RightNodes[2] as TestListStarExprStatement);
+            Assert.True(node3.Nodes.Length == 1);
+            Assert.True(node3.Separators.Length == 0);
+            Assert.True(node3.Nodes[0] is AtomNumber);
+            Assert.Equal(TokenKind.TypeComment, node1.Symbol.Kind);
+        }
+        
         
     }
 }
