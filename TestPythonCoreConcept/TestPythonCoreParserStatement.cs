@@ -714,5 +714,34 @@ namespace TestPythonCoreConcept
             Assert.Equal(5u, node1.EndPos);
             Assert.True(node1.Right is AtomName);
         }
+        
+        [Fact]
+        public void TestDelStatementWithMultipleArguments()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("del a, b, c\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes[0] is DelStatement);
+            var node1 = (node0.Nodes[0] as DelStatement);
+            Assert.Equal(TokenKind.PyDel, node1.Symbol.Kind);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(11u, node1.EndPos);
+            Assert.True(node1.Right is ExprList);
+            var node2 = (node1.Right as ExprList);
+            Assert.True(node2.Nodes.Length == 3);
+            Assert.True(node2.Separators.Length == 2);
+            Assert.True(node2.Nodes[0] is AtomName);
+            Assert.True(node2.Nodes[1] is AtomName);
+            Assert.True(node2.Nodes[2] is AtomName);
+        }
     }
 }
