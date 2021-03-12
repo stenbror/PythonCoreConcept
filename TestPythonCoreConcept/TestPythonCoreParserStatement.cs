@@ -569,7 +569,7 @@ namespace TestPythonCoreConcept
         }
         
         [Fact]
-        public void TestMultipleAssignStmtWithTYpeComment()
+        public void TestMultipleAssignStmtWithTypeComment()
         {
             var parser = new PythonCoreParser(new PythonCoreTokenizer("a = b = c = 1 # type: int -> int\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
@@ -603,6 +603,33 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.TypeComment, node1.Symbol.Kind);
         }
         
-        
+        [Fact]
+        public void TestSingleAnnAssignNotAssigned()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("*a : int\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes[0] is AnnAssignStatement);
+            var node1 = (node0.Nodes[0] as AnnAssignStatement);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol1.Kind);
+            Assert.True(node1.StartPos == 0u);
+            Assert.True(node1.EndPos == 8u);
+            Assert.True(node1.Left is TestListStarExprStatement);
+            var node2 = (node1.Left as TestListStarExprStatement);
+            Assert.True(node2.Nodes.Length == 1);
+            Assert.True(node2.Separators.Length == 0);
+            Assert.True(node2.Nodes[0] is StarExpr);
+            Assert.True(node1.Right is AtomName);
+            Assert.True(node1.Next == null);
+        }
     }
 }
