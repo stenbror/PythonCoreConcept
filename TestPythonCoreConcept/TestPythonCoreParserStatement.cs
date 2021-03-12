@@ -851,5 +851,30 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyComma, node1.Separators[0].Kind);
             Assert.Equal(TokenKind.PyComma, node1.Separators[1].Kind);
         }
+        
+        [Fact]
+        public void TestAssertStatementSingle()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("assert a\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes[0] is AssertStatement);
+            var node1 = (node0.Nodes[0] as AssertStatement);
+            Assert.Equal(TokenKind.PyAssert, node1.Symbol1.Kind);
+            Assert.True(node1.Symbol2 == null);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(8u, node1.EndPos);
+            Assert.True(node1.Left is AtomName);
+            Assert.True(node1.Right == null);
+        }
     }
 }
