@@ -897,7 +897,7 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyAssert, node1.Symbol1.Kind);
             Assert.Equal(TokenKind.PyComma, node1.Symbol2.Kind);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(3u, node1.EndPos);
+            Assert.Equal(11u, node1.EndPos);
             Assert.True(node1.Left is AtomName);
             Assert.True(node1.Right is AtomName);
         }
