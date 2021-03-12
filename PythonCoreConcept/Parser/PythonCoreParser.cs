@@ -2340,7 +2340,7 @@ namespace PythonCoreConcept.Parser
             var separators = new List<Token>();
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
-            if (_lexer.CurSymbol.Kind == TokenKind.Name)
+            if (_lexer.CurSymbol.Kind != TokenKind.Name)
                 throw new SyntaxError(_lexer.Position, "Expecting Name literal in nonlocal statement!", _lexer.CurSymbol);
             nodes.Add(_lexer.CurSymbol);
             _lexer.Advance();
@@ -2348,7 +2348,7 @@ namespace PythonCoreConcept.Parser
             {
                 separators.Add(_lexer.CurSymbol);
                 _lexer.Advance();
-                if (_lexer.CurSymbol.Kind == TokenKind.Name)
+                if (_lexer.CurSymbol.Kind != TokenKind.Name)
                     throw new SyntaxError(_lexer.Position, "Expecting Name literal in nonlocal statement!", _lexer.CurSymbol);
                 nodes.Add(_lexer.CurSymbol);
                 _lexer.Advance();
