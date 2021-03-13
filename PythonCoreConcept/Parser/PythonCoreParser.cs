@@ -2298,7 +2298,7 @@ namespace PythonCoreConcept.Parser
                 throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
             nodes.Add(_lexer.CurSymbol);
             _lexer.Advance();
-            while (_lexer.CurSymbol.Kind == TokenKind.Name)
+            while (_lexer.CurSymbol.Kind == TokenKind.PyDot)
             {
                 dots.Add(_lexer.CurSymbol);
                 _lexer.Advance();
