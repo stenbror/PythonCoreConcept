@@ -1599,5 +1599,28 @@ namespace TestPythonCoreConcept
             Assert.True(node0.Right is AtomName);
             Assert.True(node0.Extra == null);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleForStatementWithBreakAndElse()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("for a, b in b, c: break\nelse: pass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is ForStatement);
+            var node0 = (node.Nodes[0] as ForStatement);
+            Assert.Equal(0u, node0.StartPos);
+            Assert.Equal(35u, node0.EndPos);
+            Assert.Equal(TokenKind.PyFor, node0.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyIn, node0.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyColon, node0.Symbol3.Kind);
+            Assert.True(node0.Left is ExprList);
+            Assert.True(node0.Next is SimpleStatement);
+            Assert.True(node0.Right is TestList);
+            Assert.True(node0.Extra is ElseStatement);
+        }
     }
 }
