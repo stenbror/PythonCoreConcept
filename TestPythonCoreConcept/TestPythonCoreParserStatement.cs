@@ -1293,5 +1293,46 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyLeftParen, node1.Symbol3.Kind);
             Assert.Equal(TokenKind.PyRightParen, node1.Symbol4.Kind);
         }
+        
+        [Fact]
+        public void TestImportFromMultipleDottedStatementWithDotsAndParenAs()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("from ....a.b import ( a as b, c)\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes[0] is ImportFromStatement);
+            var node1 = (node0.Nodes[0] as ImportFromStatement);
+            Assert.Equal(TokenKind.PyFrom, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyImport, node1.Symbol2.Kind);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(32u, node1.EndPos);
+            Assert.True(node1.Dots.Length == 2);
+            Assert.True(node1.Left is DottedNameStatement);
+            Assert.True(node1.Right is ImportAsNamesStatement);
+            var node3 = (node1.Right as ImportAsNamesStatement);
+            Assert.True(node3.Separators.Length == 1);
+            Assert.Equal(TokenKind.PyComma, node3.Separators[0].Kind);
+            
+            Assert.True(node3.Nodes[0] is ImportAsNameStatement);
+            var node2 = (node3.Nodes[0] as ImportAsNameStatement);
+            Assert.Equal(TokenKind.Name, node2.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyAs, node2.Symbol2.Kind);
+            Assert.Equal(TokenKind.Name, node2.Symbol3.Kind);
+            Assert.Equal(TokenKind.PyLeftParen, node1.Symbol3.Kind);
+            Assert.Equal(TokenKind.PyRightParen, node1.Symbol4.Kind);
+            
+            Assert.True(node3.Nodes[1] is ImportAsNameStatement);
+            var node4 = (node3.Nodes[1] as ImportAsNameStatement);
+            Assert.Equal(TokenKind.Name, node4.Symbol1.Kind);
+        }
     }
 }
