@@ -1480,5 +1480,29 @@ namespace TestPythonCoreConcept
             Assert.True(node2.Right is SimpleStatement);
             Assert.True(node0.Nodes[1] is ElifStatement);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleWhileStatementWithBreak()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("while a := 1: break\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is WhileStatement);
+            var node0 = (node.Nodes[0] as WhileStatement);
+            Assert.Equal(0u, node0.StartPos);
+            Assert.Equal(20u, node0.EndPos);
+            Assert.Equal(TokenKind.PyWhile, node0.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
+            Assert.True(node0.Left is NamedExpr);
+            Assert.True(node0.Right is SimpleStatement);
+            Assert.True(node0.Next == null);
+            var node1 = (node0.Right as SimpleStatement);
+            Assert.True(node1.Nodes.Length == 1);
+            Assert.True(node1.Nodes[0] is BreakStatement);
+        }
     }
 }
