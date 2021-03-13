@@ -1107,5 +1107,35 @@ namespace TestPythonCoreConcept
             Assert.True(node2.Symbol2 == null);
             Assert.True(node2.Symbol3 == null);
         }
+        
+        [Fact]
+        public void TestImportFromSingleNonDottedStatementWithDotsWithoutName()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("from .... import b\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes[0] is ImportFromStatement);
+            var node1 = (node0.Nodes[0] as ImportFromStatement);
+            Assert.Equal(TokenKind.PyFrom, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyImport, node1.Symbol2.Kind);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(18u, node1.EndPos);
+            Assert.True(node1.Dots.Length == 2);
+            Assert.True(node1.Left == null);
+            Assert.True(node1.Right is ImportAsNameStatement);
+            var node2 = (node1.Right as ImportAsNameStatement);
+            Assert.Equal(TokenKind.Name, node2.Symbol1.Kind);
+            Assert.True(node2.Symbol2 == null);
+            Assert.True(node2.Symbol3 == null);
+        }
     }
 }
