@@ -1622,5 +1622,33 @@ namespace TestPythonCoreConcept
             Assert.True(node0.Right is TestList);
             Assert.True(node0.Extra is ElseStatement);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleAsyncForStatementWithBreak()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("async for a in b: break\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is AsyncStatement);
+            var node1 = (node.Nodes[0] as AsyncStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(24u, node1.EndPos);
+            Assert.Equal(TokenKind.PyAsync, node1.Symbol.Kind);
+            Assert.True(node1.Right is ForStatement);
+            var node0 = (node1.Right as ForStatement);
+            Assert.Equal(6u, node0.StartPos);
+            Assert.Equal(24u, node0.EndPos);
+            Assert.Equal(TokenKind.PyFor, node0.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyIn, node0.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyColon, node0.Symbol3.Kind);
+            Assert.True(node0.Left is AtomName);
+            Assert.True(node0.Next is SimpleStatement);
+            Assert.True(node0.Right is AtomName);
+            Assert.True(node0.Extra == null);
+        }
     }
 }
