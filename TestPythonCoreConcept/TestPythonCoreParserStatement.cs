@@ -959,5 +959,40 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyDot, node2.Separators[0].Kind);
             Assert.Equal(TokenKind.PyDot, node2.Separators[1].Kind);
         }
+        
+        [Fact]
+        public void TestImportSingleDottedAsStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("import a.b.c as d\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is SimpleStatement);
+            var node0 = (node.Nodes[0] as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes[0] is ImportNameStatement);
+            var node1 = (node0.Nodes[0] as ImportNameStatement);
+            Assert.Equal(TokenKind.PyImport, node1.Symbol.Kind);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(17u, node1.EndPos);
+            Assert.True(node1.Right is DottedAsNameStatement);
+            var node3 = (node1.Right as DottedAsNameStatement);
+            Assert.True(node3.Left is DottedNameStatement);
+            Assert.Equal(TokenKind.PyAs, node3.Symbol1.Kind);
+            Assert.Equal(TokenKind.Name, node3.Symbol2.Kind);
+            var node2 = (node3.Left as DottedNameStatement);
+            Assert.True(node2.Nodes.Length == 3);
+            Assert.True(node2.Separators.Length == 2);
+            Assert.Equal(TokenKind.Name, node2.Nodes[0].Kind);
+            Assert.Equal(TokenKind.Name, node2.Nodes[1].Kind);
+            Assert.Equal(TokenKind.Name, node2.Nodes[2].Kind);
+            Assert.Equal(TokenKind.PyDot, node2.Separators[0].Kind);
+            Assert.Equal(TokenKind.PyDot, node2.Separators[1].Kind);
+        }
     }
 }
