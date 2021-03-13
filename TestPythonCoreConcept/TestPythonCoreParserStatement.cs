@@ -1019,6 +1019,7 @@ namespace TestPythonCoreConcept
             var node10 = (node1.Right as DottedAsNamesStatement);
             Assert.True(node10.Nodes.Length == 2);
             Assert.True(node10.Separators.Length == 1);
+            Assert.Equal(TokenKind.PyComma, node10.Separators[0].Kind);
             
             var node3 = (node10.Nodes[0] as DottedAsNameStatement);
             Assert.True(node3.Left is DottedNameStatement);
