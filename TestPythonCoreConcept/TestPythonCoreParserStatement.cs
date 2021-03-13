@@ -1369,5 +1369,23 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyAs, node2.Symbol2.Kind);
             Assert.Equal(TokenKind.Name, node2.Symbol3.Kind);
         }
+        
+        [Fact]
+        public void TestCompoundIfSingleStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("if a: pass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is IfStatement);
+            var node0 = (node.Nodes[0] as IfStatement);
+            Assert.Equal(TokenKind.PyIf, node0.Symbol1.Kind);
+            Assert.True(node0.Left is AtomName);
+            Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
+            Assert.True(node0.Right is SimpleStatement);
+        }
     }
 }
