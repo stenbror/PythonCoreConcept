@@ -2268,6 +2268,8 @@ namespace PythonCoreConcept.Parser
                 nodes.Add( ParseImportAsNameStmt() );
             }
 
+            if (nodes.Count == 1 && separators.Count == 0) return nodes[0];
+
             return new ImportAsNamesStatement(startPos, _lexer.Position, nodes.ToArray(), separators.ToArray());
         }
         
