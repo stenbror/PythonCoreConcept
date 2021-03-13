@@ -1382,10 +1382,38 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes.Length == 1);
             Assert.True(node.Nodes[0] is IfStatement);
             var node0 = (node.Nodes[0] as IfStatement);
+            Assert.Equal(0u, node0.StartPos);
+            Assert.Equal(11u, node0.EndPos);
             Assert.Equal(TokenKind.PyIf, node0.Symbol1.Kind);
             Assert.True(node0.Left is AtomName);
             Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
             Assert.True(node0.Right is SimpleStatement);
+        }
+        
+        [Fact]
+        public void TestCompoundIfElseStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("if a: pass\nelse: pass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is IfStatement);
+            var node0 = (node.Nodes[0] as IfStatement);
+            Assert.Equal(0u, node0.StartPos);
+            Assert.Equal(22u, node0.EndPos);
+            Assert.Equal(TokenKind.PyIf, node0.Symbol1.Kind);
+            Assert.True(node0.Left is AtomName);
+            Assert.Equal(TokenKind.PyColon, node0.Symbol2.Kind);
+            Assert.True(node0.Right is SimpleStatement);
+            Assert.True(node0.Nodes.Length == 0);
+            Assert.True(node0.Next is ElseStatement);
+            var node1 = (node0.Next as ElseStatement);
+            Assert.Equal(TokenKind.PyElse, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol2.Kind);
+            Assert.True(node1.Right is SimpleStatement);
         }
     }
 }
