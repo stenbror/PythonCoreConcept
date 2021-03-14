@@ -1650,5 +1650,26 @@ namespace TestPythonCoreConcept
             Assert.True(node0.Right is AtomName);
             Assert.True(node0.Extra == null);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleClassStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a: break\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is ClassStatement);
+            var node1 = (node.Nodes[0] as ClassStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(15u, node1.EndPos);
+            Assert.Equal(TokenKind.PyClass, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol5.Kind);
+            Assert.True(node1.Left is null);
+            Assert.True(node1.Right is SimpleStatement);
+        }
     }
 }
