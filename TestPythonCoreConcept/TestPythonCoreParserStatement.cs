@@ -1776,5 +1776,32 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyAs, node3.Symbol.Kind);
             Assert.True(node3.Right is AtomName);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleAsyncWithStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("async with a: break\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is AsyncStatement);
+            var node1 = (node.Nodes[0] as AsyncStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(20u, node1.EndPos);
+            Assert.Equal(TokenKind.PyAsync, node1.Symbol.Kind);
+            Assert.True(node1.Right is WithStatement);
+            var node3 = (node1.Right as WithStatement);
+            Assert.Equal(TokenKind.PyWith, node3.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyColon, node3.Symbol2.Kind);
+            Assert.True(node3.Symbol3 == null); // TypeComment
+            Assert.True(node3.Right is SimpleStatement);
+            Assert.True(node3.WithItems.Length == 1);
+            Assert.True(node3.WithItems[0] is WithItemStatement);
+            var node2 = (node3.WithItems[0] as WithItemStatement);
+            Assert.True(node2.Left is AtomName);
+        }
     }
 }
