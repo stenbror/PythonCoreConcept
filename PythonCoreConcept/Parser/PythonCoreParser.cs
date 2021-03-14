@@ -1486,13 +1486,13 @@ namespace PythonCoreConcept.Parser
         private StatementNode ParseParameterStmt()
         {
             var startPos = _lexer.Position;
-            if (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen)
+            if (_lexer.CurSymbol.Kind != TokenKind.PyLeftParen)
                 throw new SyntaxError(_lexer.Position, "Expecting '(' in function declaration!", _lexer.CurSymbol);
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
             StatementNode right = null;
             if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen) right = ParseTypedArgsList();
-            if (_lexer.CurSymbol.Kind == TokenKind.PyLeftParen)
+            if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
                 throw new SyntaxError(_lexer.Position, "Expecting ')' in function declaration!", _lexer.CurSymbol);
             var symbol2 = _lexer.CurSymbol;
             _lexer.Advance();
