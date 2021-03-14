@@ -54,6 +54,9 @@ namespace PythonCoreConcept.Parser
         private UInt32 _index;
         private bool _atBol;
         private Stack<TokenKind> _levelStack;
+        private Stack<UInt32> _indentStack;
+        private Int32 _pending;
+        private bool _isInteractiveMode;
 
         public Token CurSymbol { get; private set; }
         public UInt32 Position { get; private set; }
@@ -70,6 +73,10 @@ namespace PythonCoreConcept.Parser
             CurSymbol = null;
             _atBol = true;
             _levelStack = new Stack<TokenKind>();
+            _indentStack = new Stack<UInt32>();
+            _indentStack.Push(0);
+            _pending = 0;
+            _isInteractiveMode = false;
             
             this.Advance();
         }
@@ -84,8 +91,76 @@ namespace PythonCoreConcept.Parser
         public void Advance()
         {
             bool isBlankline = false;
-            
-            
+          
+_nextLine:
+            isBlankline = false;
+
+            if (_atBol)
+            {
+                _atBol = false;
+                uint col = 0;
+                while (_sourceBuffer[_index] == ' ' || _sourceBuffer[_index] == '\v' || _sourceBuffer[_index] == '\t')
+                {
+                    if (_sourceBuffer[_index] == ' ') col++;
+                    else if (_sourceBuffer[_index] == '\t') col = (col / TabSize + 1) * TabSize;
+                    else col = 0;
+                    _index++;
+                }
+                
+                if (_sourceBuffer[_index] == '#' || _sourceBuffer[_index] == '\r' || _sourceBuffer[_index] == '\n' ||
+                    _sourceBuffer[_index] == '\\')
+                {
+                    if (col == 0 && (_sourceBuffer[_index] == '\r' || _sourceBuffer[_index] == '\n') && _isInteractiveMode)
+                      isBlankline = false;
+                    else if (_isInteractiveMode) // lineno = 1 in interactive mode
+                    {
+                      col = 0;
+                      isBlankline = false;
+                    }
+                    else isBlankline = true;
+                }
+
+                if (!isBlankline && _levelStack.Count == 0)
+                {
+                    if (col == _indentStack.Peek())
+                    {
+                        // No change
+                    }
+                    else if (col > _indentStack.Peek())
+                    {
+                        _indentStack.Push(col);
+                        _pending++;
+                    }
+                    else
+                    {
+                        while (_indentStack.Count > 0 && col < _indentStack.Peek())
+                        {
+                          _pending--;
+                          _indentStack.Pop();
+                        }
+
+                        if (col != _indentStack.Peek()) throw new LexicalError(_index, "Inconsistant indentation level!");
+                    }
+                }
+            }
+
+            Position = _index;
+
+            if (_pending != 0)
+            {
+                if (_pending < 0)
+                {
+                    _pending++;
+                    CurSymbol = new Token(Position, _index, TokenKind.Dedent, null);
+                }
+                else
+                {
+                    _pending--;
+                    CurSymbol = new Token(Position, _index, TokenKind.Indent, null);
+                }
+
+                return;
+            }
             
 _again:
             Position = _index;
