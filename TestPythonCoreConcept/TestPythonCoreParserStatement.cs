@@ -1803,5 +1803,27 @@ namespace TestPythonCoreConcept
             var node2 = (node3.WithItems[0] as WithItemStatement);
             Assert.True(node2.Left is AtomName);
         }
+        
+        [Fact]
+        public void TestCompoundSimpletryFinallyStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("try: pass\nfinally: pass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is TryStatement);
+            var node1 = (node.Nodes[0] as TryStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(24u, node1.EndPos);
+            Assert.Equal(TokenKind.PyTry, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyFinally, node1.Symbol3.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol4.Kind);
+            Assert.True(node1.Left is SimpleStatement);
+            Assert.True(node1.Right is SimpleStatement);
+        }
     }
 }
