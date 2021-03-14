@@ -1825,5 +1825,33 @@ namespace TestPythonCoreConcept
             Assert.True(node1.Left is SimpleStatement);
             Assert.True(node1.Right is SimpleStatement);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleTryExceptStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("try: pass\nexcept: pass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is TryStatement);
+            var node1 = (node.Nodes[0] as TryStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(23u, node1.EndPos);
+            Assert.Equal(TokenKind.PyTry, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol2.Kind);
+            Assert.True(node1.Left is SimpleStatement);
+            Assert.True(node1.Right == null);
+            Assert.True(node1.ExceptNodes.Length == 1);
+            Assert.True(node1.ExceptNodes[0] is ExceptStatement);
+            var node2 = (node1.ExceptNodes[0] as ExceptStatement);
+            Assert.True(node2.Left is ExceptClauseStatement);
+            var node3 = (node2.Left as ExceptClauseStatement);
+            Assert.Equal(TokenKind.PyExcept, node3.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyColon, node2.Symbol.Kind);
+            Assert.True(node2.Right is SimpleStatement);
+        }
     }
 }
