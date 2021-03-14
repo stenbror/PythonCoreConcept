@@ -1990,5 +1990,27 @@ namespace TestPythonCoreConcept
             Assert.True(node3.Right is AtomName);
             Assert.True(node3.Next is SimpleStatement);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleDefReturnStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a() -> b: break\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is FuncDefStatement);
+            var node1 = (node.Nodes[0] as FuncDefStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(20u, node1.EndPos);
+            Assert.Equal(TokenKind.PyDef, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyArrow, node1.Symbol3.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol5.Kind);
+            Assert.True(node1.Right is AtomName);
+            Assert.True(node1.Next is SimpleStatement);
+        }
     }
 }
