@@ -2107,7 +2107,7 @@ namespace PythonCoreConcept.Parser
             var startPos = _lexer.Position;
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
-            if (_lexer.CurSymbol.Kind != TokenKind.Newline && _lexer.CurSymbol.Kind == TokenKind.PySemiColon)
+            if (_lexer.CurSymbol.Kind != TokenKind.Newline && _lexer.CurSymbol.Kind != TokenKind.PySemiColon)
             {
                 var right = ParseTestListStarExpr();
 

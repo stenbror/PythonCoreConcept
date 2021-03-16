@@ -2039,5 +2039,32 @@ namespace TestPythonCoreConcept
             var node3 = (node2.Nodes[0] as ReturnStatement);
             Assert.True(node3.Right == null);
         }
+        
+        [Fact]
+        public void TestCompoundSimpleDefActualReturnWithAtgumentStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a() -> b: return a, b\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is FuncDefStatement);
+            var node1 = (node.Nodes[0] as FuncDefStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(26u, node1.EndPos);
+            Assert.Equal(TokenKind.PyDef, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyArrow, node1.Symbol3.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol5.Kind);
+            Assert.True(node1.Right is AtomName);
+            Assert.True(node1.Next is SimpleStatement);
+            var node2 = (node1.Next as SimpleStatement);
+            Assert.True(node2.Nodes.Length == 1);
+            Assert.True(node2.Nodes[0] is ReturnStatement);
+            var node3 = (node2.Nodes[0] as ReturnStatement);
+            Assert.True(node3.Right is TestListStarExprStatement);
+        }
     }
 }
