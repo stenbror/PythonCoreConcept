@@ -1717,7 +1717,7 @@ namespace PythonCoreConcept.Parser
         private StatementNode ParseTfpDef()
         {
             var startPos = _lexer.Position;
-            if (_lexer.CurSymbol.Kind == TokenKind.Name)
+            if (_lexer.CurSymbol.Kind != TokenKind.Name)
                 throw new SyntaxError(_lexer.Position, "Expecting Name literal in argument!", _lexer.CurSymbol);
             var left = _lexer.CurSymbol;
             _lexer.Advance();
