@@ -2156,5 +2156,46 @@ namespace TestPythonCoreConcept
             Assert.Equal(TokenKind.PyFrom, node3.Symbol2.Kind);
             Assert.True(node3.Right is AtomName);
         }
+        
+        [Fact]
+        public void TestCompoundDecoratedDefStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("@a.b\ndef a() -> b: raise a from b\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is DecoratedStatement);
+            var node1 = (node.Nodes[0] as DecoratedStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(34u, node1.EndPos);
+            Assert.True(node1.Left is DecoratorsStatement);
+            var node10 = (node1.Left as DecoratorsStatement);
+            Assert.True(node10.Right.Length == 1);
+            Assert.True(node10.Right[0] is DecoratorStatement);
+            var node11 = (node10.Right[0] as DecoratorStatement);
+            Assert.True(node11.Left is DottedNameStatement);
+            Assert.Equal(TokenKind.PyMatrice, node11.Symbol.Kind);
+            Assert.Equal(TokenKind.Newline, node11.Symbol4.Kind);
+            
+            Assert.True(node1.Right is FuncDefStatement);
+            var node2 = (node1.Right as FuncDefStatement);
+            Assert.Equal(TokenKind.PyDef, node2.Symbol1.Kind);
+            Assert.Equal(TokenKind.Name, node2.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyArrow, node2.Symbol3.Kind);
+            Assert.Equal(TokenKind.PyColon, node2.Symbol5.Kind);
+            Assert.True(node2.Right is AtomName);
+            Assert.True(node2.Next is SimpleStatement);
+            var node3 = (node2.Next as SimpleStatement);
+            Assert.True(node3.Nodes.Length == 1);
+            Assert.True(node3.Nodes[0] is RaiseStatement);
+            var node4 = (node3.Nodes[0] as RaiseStatement);
+            Assert.Equal(TokenKind.PyRaise, node4.Symbol1.Kind);
+            Assert.True(node4.Left is AtomName);
+            Assert.Equal(TokenKind.PyFrom, node4.Symbol2.Kind);
+            Assert.True(node4.Right is AtomName);
+        }
     }
 }

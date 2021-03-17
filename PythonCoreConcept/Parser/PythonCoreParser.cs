@@ -1390,7 +1390,7 @@ namespace PythonCoreConcept.Parser
                     var rightClass = ParseClass();
                     return new DecoratedStatement(startPos, _lexer.Position, left, rightClass);
                 case TokenKind.PyDef:
-                    var rightDef = ParseClass();
+                    var rightDef = ParseFuncDef();
                     return new DecoratedStatement(startPos, _lexer.Position, left, rightDef);
                 case TokenKind.PyAsync:
                     var rightAsync = ParseAsyncFuncDef();
@@ -1428,7 +1428,7 @@ namespace PythonCoreConcept.Parser
                 symbol3 = _lexer.CurSymbol;
                 _lexer.Advance();
             }
-            if (_lexer.CurSymbol.Kind != TokenKind.PyRightParen)
+            if (_lexer.CurSymbol.Kind != TokenKind.Newline)
                 throw new SyntaxError(_lexer.Position, "Expecting Newkine after decorator!", _lexer.CurSymbol);
             var symbol4 = _lexer.CurSymbol;
             _lexer.Advance();
