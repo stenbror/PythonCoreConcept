@@ -2824,5 +2824,49 @@ namespace TestPythonCoreConcept
             Assert.True(node3.Nodes[2] is TfpDefStatement);
             Assert.True(node3.Nodes[3] is TfpDefStatement);
         }
+        
+        [Fact]
+        public void TestCompoundFuncdefStatementArgument10()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a(e, f : x = 1, g, /, h, *a: b, c = 1): pass\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.True(node.Newlines.Length == 0);
+            Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
+            Assert.True(node.Nodes.Length == 1);
+            Assert.True(node.Nodes[0] is FuncDefStatement);
+            var node1 = (node.Nodes[0] as FuncDefStatement);
+            Assert.Equal(0u, node1.StartPos);
+            Assert.Equal(49u, node1.EndPos);
+            Assert.Equal(TokenKind.PyDef, node1.Symbol1.Kind);
+            Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
+            Assert.Equal(TokenKind.PyColon, node1.Symbol5.Kind);
+            Assert.True(node1.Left is ParametersStatement);
+            var node2 = (node1.Left as ParametersStatement);
+            Assert.Equal(TokenKind.PyLeftParen, node2.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyRightParen, node2.Symbol2.Kind);
+            Assert.True(node2.Right is TypedArgsListStatement);
+            var node3 = (node2.Right as TypedArgsListStatement);
+            Assert.Equal(TokenKind.PyDiv, node3.Slash.Kind); // '/'
+            Assert.True(node3.Separators.Length == 6);
+            Assert.Equal(TokenKind.PyMul, node3.Mul.Kind);
+            Assert.True(node3.MulNode is TfpDefStatement);
+            var node4 = (node3.MulNode as TfpDefStatement);
+            Assert.Equal(TokenKind.Name, node4.Symbol1.Kind);
+            Assert.Equal(TokenKind.PyColon, node4.Symbol2.Kind);
+            Assert.True(node4.Right is AtomName);
+            Assert.True(node1.Next is SimpleStatement);
+            Assert.True(node3.Nodes.Length == 5);
+            Assert.True(node3.Nodes[4] is TfpDefAssignStatement);
+            var node8 = (node3.Nodes[4] as TfpDefAssignStatement);
+            Assert.True(node8.Left is TfpDefStatement);
+            Assert.Equal(TokenKind.PyAssign, node8.Symbol.Kind);
+            Assert.True(node8.Right is AtomNumber);
+            Assert.True(node3.Nodes[0] is TfpDefStatement);
+            Assert.True(node3.Nodes[1] is TfpDefAssignStatement);
+            Assert.True(node3.Nodes[2] is TfpDefStatement);
+            Assert.True(node3.Nodes[3] is TfpDefStatement);
+        }
     }
 }
