@@ -3030,5 +3030,18 @@ namespace TestPythonCoreConcept
             Assert.True(node3.Nodes.Length == 1);
             Assert.True(node3.Nodes[0] is TfpDefStatement);
         }
+        
+        [Fact]
+        public void TestSingleInputNewline()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("\n".ToCharArray()));
+            var rootNode = parser.ParseSingleInput();
+            Assert.True(rootNode is SingleInputNode);
+            var node = (rootNode as SingleInputNode);
+            Assert.Equal(TokenKind.Newline, node.Newline.Kind);
+            Assert.True(node.Right == null);
+            Assert.Equal(0u, node.StartPos);
+            Assert.Equal(0u, node.EndPos);
+        }
     }
 }
