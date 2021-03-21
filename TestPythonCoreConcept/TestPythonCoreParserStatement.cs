@@ -3043,5 +3043,22 @@ namespace TestPythonCoreConcept
             Assert.Equal(0u, node.StartPos);
             Assert.Equal(0u, node.EndPos);
         }
+        
+        [Fact]
+        public void TestSingleInputSingleStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("pass\n".ToCharArray()));
+            var rootNode = parser.ParseSingleInput();
+            Assert.True(rootNode is SingleInputNode);
+            var node = (rootNode as SingleInputNode);
+            Assert.True(node.Newline == null);
+            Assert.True(node.Right is SimpleStatement);
+            var node0 = (node.Right as SimpleStatement);
+            Assert.Equal(TokenKind.Newline, node0.Symbol.Kind);
+            Assert.True(node0.Separators.Length == 0);
+            Assert.True(node0.Nodes.Length == 1);
+            Assert.Equal(0u, node.StartPos);
+            Assert.Equal(5u, node.EndPos);
+        }
     }
 }
