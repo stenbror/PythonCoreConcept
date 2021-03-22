@@ -133,5 +133,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestTrailerDotNameError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("a.\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(2u, e.Position);
+                Assert.Equal("Expecting NAME literal after '.'!", e.Message);
+                Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
