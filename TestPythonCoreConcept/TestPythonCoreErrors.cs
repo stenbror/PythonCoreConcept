@@ -15,6 +15,7 @@ namespace TestPythonCoreConcept
             try
             {
                 var rootNode = parser.ParseFileInput();
+                Assert.True(false);
             }
             catch (SyntaxError e)
             {
@@ -35,11 +36,33 @@ namespace TestPythonCoreConcept
             try
             {
                 var rootNode = parser.ParseFileInput();
+                Assert.True(false);
             }
             catch (SyntaxError e)
             {
                 Assert.Equal(2u, e.Position);
                 Assert.Equal("Missing ')' in literal!", e.Message);
+                Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
+        
+        [Fact]
+        public void TestAtomListError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("[a\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(2u, e.Position);
+                Assert.Equal("Missing ']' in literal!", e.Message);
                 Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
             }
             catch 
