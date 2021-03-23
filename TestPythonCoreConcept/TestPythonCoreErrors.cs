@@ -154,5 +154,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestComparisonNotMissingInError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("a not b\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(6u, e.Position);
+                Assert.Equal("Expecting 'not in', but missing 'in'!", e.Message);
+                Assert.Equal(TokenKind.Name, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
