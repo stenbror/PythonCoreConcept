@@ -196,5 +196,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestExpressionTestError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("a if b c\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(7u, e.Position);
+                Assert.Equal("Missing 'else' in test expression!", e.Message);
+                Assert.Equal(TokenKind.Name, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
