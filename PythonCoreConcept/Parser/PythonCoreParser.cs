@@ -853,6 +853,8 @@ namespace PythonCoreConcept.Parser
         private ExpressionNode ParseSyncCompFor()
         {
             var startPos = _lexer.Position;
+            if (_lexer.CurSymbol.Kind != TokenKind.PyFor)
+                throw new SyntaxError(_lexer.Position, "Expecting 'for' in for expression!", _lexer.CurSymbol);
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
             var left = ParseExprList();

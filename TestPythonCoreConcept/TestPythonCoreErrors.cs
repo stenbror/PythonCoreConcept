@@ -322,5 +322,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestTupleCompMissingForError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("( a async c in d: pass)\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(10u, e.Position);
+                Assert.Equal("Expecting 'for' in for expression!", e.Message);
+                Assert.Equal(TokenKind.Name, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
