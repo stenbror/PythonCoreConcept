@@ -364,5 +364,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestTupleYieldMissingArgumentError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("( yield )\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(8u, e.Position);
+                Assert.Equal("Illegal literal!", e.Message);
+                Assert.Equal(TokenKind.PyRightParen, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
