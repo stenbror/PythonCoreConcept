@@ -448,5 +448,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFuncTypeMissingAfterMulError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("( * ) a\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFuncTypeInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(4u, e.Position);
+                Assert.Equal("Illegal literal!", e.Message);
+                Assert.Equal(TokenKind.PyRightParen, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
