@@ -427,5 +427,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFuncTypeMissingArrowError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("( ) a\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFuncTypeInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(4u, e.Position);
+                Assert.Equal("Expecting '->' in func type!", e.Message);
+                Assert.Equal(TokenKind.Name, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
