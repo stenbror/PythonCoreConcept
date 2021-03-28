@@ -700,5 +700,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundExceptMissingAfterAsError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("try: pass\nexcept a as pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(22u, e.Position);
+                Assert.Equal("Missing Name after 'as' in 'except' statement!", e.Message);
+                Assert.Equal(TokenKind.PyPass, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
