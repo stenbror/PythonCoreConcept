@@ -511,5 +511,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompoundElifMissingColonError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("if a: pass\nelif b pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(18u, e.Position);
+                Assert.Equal("Missing ':' in 'elif' statement!", e.Message);
+                Assert.Equal(TokenKind.PyPass, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
