@@ -595,5 +595,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundForMissingInError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("for a b: pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(6u, e.Position);
+                Assert.Equal("Missing 'in' in 'for' statement!", e.Message);
+                Assert.Equal(TokenKind.Name, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
