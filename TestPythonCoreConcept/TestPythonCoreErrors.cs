@@ -532,5 +532,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompoundElseMissingColonError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("if a: pass\nelif b: pass\nelse pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(29u, e.Position);
+                Assert.Equal("Missing ':' in 'else' statement!", e.Message);
+                Assert.Equal(TokenKind.PyPass, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
