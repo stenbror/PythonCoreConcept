@@ -637,5 +637,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundTryMissingColonError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("try pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(4u, e.Position);
+                Assert.Equal("Missing ':' in 'try' statement!", e.Message);
+                Assert.Equal(TokenKind.PyPass, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
