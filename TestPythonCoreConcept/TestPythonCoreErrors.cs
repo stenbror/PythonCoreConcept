@@ -721,5 +721,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundWithMissingAfterAsError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("with a as: pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(9u, e.Position);
+                Assert.Equal("Illegal literal!", e.Message);
+                Assert.Equal(TokenKind.PyColon, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
