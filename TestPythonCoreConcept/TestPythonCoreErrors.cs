@@ -952,5 +952,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundDecoratedMissingNewlineError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("@a.b()class\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(6u, e.Position);
+                Assert.Equal("Expecting Newkine after decorator!", e.Message);
+                Assert.Equal(TokenKind.PyClass, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
