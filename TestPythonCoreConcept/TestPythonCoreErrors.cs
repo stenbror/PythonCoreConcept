@@ -994,5 +994,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundFuncDefMissingNameError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def(): pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(3u, e.Position);
+                Assert.Equal("Missing Name of functiomn!", e.Message);
+                Assert.Equal(TokenKind.PyLeftParen, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
