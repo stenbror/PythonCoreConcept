@@ -784,5 +784,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundClassMissingRightParenthesisError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a(: pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(8u, e.Position);
+                Assert.Equal("Illegal literal!", e.Message);
+                Assert.Equal(TokenKind.PyColon, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
