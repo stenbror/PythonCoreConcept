@@ -2299,7 +2299,7 @@ namespace PythonCoreConcept.Parser
             var nodes = new List<Token>();
             var dots = new List<Token>();
             if (_lexer.CurSymbol.Kind != TokenKind.Name)
-                throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
+                throw new SyntaxError(_lexer.Position, "Expecting Name literal in dotted name statement!", _lexer.CurSymbol);
             nodes.Add(_lexer.CurSymbol);
             _lexer.Advance();
             while (_lexer.CurSymbol.Kind == TokenKind.PyDot)
@@ -2307,7 +2307,7 @@ namespace PythonCoreConcept.Parser
                 dots.Add(_lexer.CurSymbol);
                 _lexer.Advance();
                 if (_lexer.CurSymbol.Kind != TokenKind.Name)
-                    throw new SyntaxError(_lexer.Position, "Expecting Name literal in import statement!", _lexer.CurSymbol);
+                    throw new SyntaxError(_lexer.Position, "Expecting Name literal in dotted name statement!", _lexer.CurSymbol);
                 nodes.Add(_lexer.CurSymbol);
                 _lexer.Advance();
             }
