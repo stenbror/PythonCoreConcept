@@ -763,5 +763,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundClassMissingNameError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("class: pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(5u, e.Position);
+                Assert.Equal("Expecting Name of class statement!", e.Message);
+                Assert.Equal(TokenKind.PyColon, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
