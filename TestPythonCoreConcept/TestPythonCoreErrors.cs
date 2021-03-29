@@ -973,5 +973,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundDecoratedMissingValidKeywordError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("@a.b()\nwith\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(7u, e.Position);
+                Assert.Equal("Expecting 'async', 'class' or 'def' after '@' decorators!", e.Message);
+                Assert.Equal(TokenKind.PyWith, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
