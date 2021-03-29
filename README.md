@@ -9,4 +9,4 @@ UnitTests for valid SyntraxError handling in progress.
 
 See UnitTest for documentation about setup of parsing of file.
 
-We now have over 390 UnitTests written and passed. There are more on the way before i have confidence in the parser doing it job corectly.
+We now have over 390 UnitTests written and passed. There are more on the way before i have confidence in the parser doing its job corectly.
