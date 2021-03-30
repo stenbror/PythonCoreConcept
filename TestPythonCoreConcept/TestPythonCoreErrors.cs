@@ -1162,5 +1162,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundFuncDefArgumentMissingAfterAssignError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a(b:c =) -> c : pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(11u, e.Position);
+                Assert.Equal("Illegal literal!", e.Message);
+                Assert.Equal(TokenKind.PyRightParen, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
