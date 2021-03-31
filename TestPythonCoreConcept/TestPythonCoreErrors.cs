@@ -1225,5 +1225,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundFuncDefArgumentMissingTrailingPowerError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a(b, c, /, **) -> c : pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(17u, e.Position);
+                Assert.Equal("Missing NAME literal after '**' in argument list!", e.Message);
+                Assert.Equal(TokenKind.PyRightParen, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
