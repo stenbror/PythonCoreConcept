@@ -1183,5 +1183,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputCompundFuncDefArgumentMissingDivError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a(b, c, *) -> c : pass\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(12u, e.Position);
+                Assert.Equal("Expecting ')' in function declaration!", e.Message);
+                Assert.Equal(TokenKind.PyMul, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
