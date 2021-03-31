@@ -1330,5 +1330,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputLambadVarArgsListMissingAssignFollowedByMulError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda a=b, *: b\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(12u, e.Position);
+                Assert.Equal("Unexpected '*' or '**' in argument list before '/'!", e.Message);
+                Assert.Equal(TokenKind.PyMul, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }

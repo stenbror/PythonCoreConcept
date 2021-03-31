@@ -1003,7 +1003,9 @@ namespace PythonCoreConcept.Parser
                     nodes.Add( ParseVfpDefAssign() );
                 }
 
-                if (_lexer.CurSymbol.Kind == TokenKind.PyDiv)
+                if (_lexer.CurSymbol.Kind == TokenKind.PyMul || _lexer.CurSymbol.Kind == TokenKind.PyPower)
+                    throw new SyntaxError(_lexer.Position, "Unexpected '*' or '**' in argument list before '/'!", _lexer.CurSymbol);
+                else if (_lexer.CurSymbol.Kind == TokenKind.PyDiv)
                 {
                     div = _lexer.CurSymbol;
                     _lexer.Advance();
