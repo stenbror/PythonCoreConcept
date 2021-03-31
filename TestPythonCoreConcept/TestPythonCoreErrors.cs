@@ -1288,5 +1288,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputLambadVarArgsListMissingPowerError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("lambda **: b\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(9u, e.Position);
+                Assert.Equal("Missing NAME literal after '**' in argument list!", e.Message);
+                Assert.Equal(TokenKind.PyColon, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
