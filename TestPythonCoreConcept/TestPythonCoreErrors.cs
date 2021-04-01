@@ -1519,5 +1519,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputNonlocalError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("nonlocal a,;\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(11u, e.Position);
+                Assert.Equal("Expecting Name literal in nonlocal statement!", e.Message);
+                Assert.Equal(TokenKind.PySemiColon, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
