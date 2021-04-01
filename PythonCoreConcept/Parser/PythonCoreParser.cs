@@ -1845,7 +1845,7 @@ namespace PythonCoreConcept.Parser
             }
 
             if (_lexer.CurSymbol.Kind != TokenKind.Newline)
-                throw new SyntaxError(_lexer.Position, "Expecting newline or ';' in statement kist!", _lexer.CurSymbol);
+                throw new SyntaxError(_lexer.Position, "Expecting newline or ';' in statement list!", _lexer.CurSymbol);
             var newline = _lexer.CurSymbol;
             _lexer.Advance();
             
