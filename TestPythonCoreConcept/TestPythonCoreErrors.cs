@@ -1456,5 +1456,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputDelMissingExprError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("del;\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(3u, e.Position);
+                Assert.Equal("Illegal literal!", e.Message);
+                Assert.Equal(TokenKind.PySemiColon, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
