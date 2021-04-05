@@ -1708,5 +1708,47 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputFlowLevelBreakError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("break\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(5u, e.Position);
+                Assert.Equal("Found 'break' statement outside of flow statement!", e.Message);
+                Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
+        
+        [Fact]
+        public void TestFileInputFlowLevelContinueError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("continue\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(8u, e.Position);
+                Assert.Equal("Found 'continue' statement outside of flow statement!", e.Message);
+                Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }

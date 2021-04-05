@@ -1655,7 +1655,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleClassStatement()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a: break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a: pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1665,7 +1665,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is ClassStatement);
             var node1 = (node.Nodes[0] as ClassStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(15u, node1.EndPos);
+            Assert.Equal(14u, node1.EndPos);
             Assert.Equal(TokenKind.PyClass, node1.Symbol1.Kind);
             Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
             Assert.Equal(TokenKind.PyColon, node1.Symbol5.Kind);
@@ -1676,7 +1676,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleClassStatementWithParenthesis()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a(): break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a(): pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1686,7 +1686,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is ClassStatement);
             var node1 = (node.Nodes[0] as ClassStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(17u, node1.EndPos);
+            Assert.Equal(16u, node1.EndPos);
             Assert.Equal(TokenKind.PyClass, node1.Symbol1.Kind);
             Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
             Assert.Equal(TokenKind.PyLeftParen, node1.Symbol3.Kind);
@@ -1699,7 +1699,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleClassStatementWithParenthesisAndArguments()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a(b, c): break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("class a(b, c): pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1709,7 +1709,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is ClassStatement);
             var node1 = (node.Nodes[0] as ClassStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(21u, node1.EndPos);
+            Assert.Equal(20u, node1.EndPos);
             Assert.Equal(TokenKind.PyClass, node1.Symbol1.Kind);
             Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
             Assert.Equal(TokenKind.PyLeftParen, node1.Symbol3.Kind);
@@ -1727,7 +1727,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleWithStatement()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("with a: break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("with a: pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1737,7 +1737,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is WithStatement);
             var node1 = (node.Nodes[0] as WithStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(14u, node1.EndPos);
+            Assert.Equal(13u, node1.EndPos);
             Assert.Equal(TokenKind.PyWith, node1.Symbol1.Kind);
             Assert.Equal(TokenKind.PyColon, node1.Symbol2.Kind);
             Assert.True(node1.Symbol3 == null); // TypeComment
@@ -1751,7 +1751,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleWithStatementAndMoreItems()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("with a, b as c: break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("with a, b as c: pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1761,7 +1761,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is WithStatement);
             var node1 = (node.Nodes[0] as WithStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(22u, node1.EndPos);
+            Assert.Equal(21u, node1.EndPos);
             Assert.Equal(TokenKind.PyWith, node1.Symbol1.Kind);
             Assert.Equal(TokenKind.PyColon, node1.Symbol2.Kind);
             Assert.True(node1.Symbol3 == null); // TypeComment
@@ -1781,7 +1781,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleAsyncWithStatement()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("async with a: break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("async with a: pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1791,7 +1791,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is AsyncStatement);
             var node1 = (node.Nodes[0] as AsyncStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(20u, node1.EndPos);
+            Assert.Equal(19u, node1.EndPos);
             Assert.Equal(TokenKind.PyAsync, node1.Symbol.Kind);
             Assert.True(node1.Right is WithStatement);
             var node3 = (node1.Right as WithStatement);
@@ -1947,7 +1947,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleAsyncDefStatement()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("async def a(): break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("async def a(): pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1957,7 +1957,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is AsyncStatement);
             var node1 = (node.Nodes[0] as AsyncStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(21u, node1.EndPos);
+            Assert.Equal(20u, node1.EndPos);
             Assert.Equal(TokenKind.PyAsync, node1.Symbol.Kind);
             Assert.True(node1.Right is FuncDefStatement);
             var node3 = (node1.Right as FuncDefStatement);
@@ -1970,7 +1970,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleAsyncDefReturnStatement()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("async def a() -> b: break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("async def a() -> b: pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -1980,7 +1980,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is AsyncStatement);
             var node1 = (node.Nodes[0] as AsyncStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(26u, node1.EndPos);
+            Assert.Equal(25u, node1.EndPos);
             Assert.Equal(TokenKind.PyAsync, node1.Symbol.Kind);
             Assert.True(node1.Right is FuncDefStatement);
             var node3 = (node1.Right as FuncDefStatement);
@@ -1995,7 +1995,7 @@ namespace TestPythonCoreConcept
         [Fact]
         public void TestCompoundSimpleDefReturnStatement()
         {
-            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a() -> b: break\n".ToCharArray()));
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a() -> b: pass\n".ToCharArray()));
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
@@ -2005,7 +2005,7 @@ namespace TestPythonCoreConcept
             Assert.True(node.Nodes[0] is FuncDefStatement);
             var node1 = (node.Nodes[0] as FuncDefStatement);
             Assert.Equal(0u, node1.StartPos);
-            Assert.Equal(20u, node1.EndPos);
+            Assert.Equal(19u, node1.EndPos);
             Assert.Equal(TokenKind.PyDef, node1.Symbol1.Kind);
             Assert.Equal(TokenKind.Name, node1.Symbol2.Kind);
             Assert.Equal(TokenKind.PyArrow, node1.Symbol3.Kind);

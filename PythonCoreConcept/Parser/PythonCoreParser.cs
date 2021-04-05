@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using PythonCoreConcept.Parser.AST;
 
@@ -13,10 +14,12 @@ namespace PythonCoreConcept.Parser
     public class PythonCoreParser
     {
         private PythonCoreTokenizer _lexer;
+        private UInt32 _flowLevel;
         
         public PythonCoreParser(PythonCoreTokenizer tokenizer)
         {
             _lexer = tokenizer;
+            _flowLevel = 0u; // While and for statement can have break and continue inside.
         }
         
 #region Expression rules
@@ -1199,6 +1202,7 @@ namespace PythonCoreConcept.Parser
             var startPos = _lexer.Position;
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
+            _flowLevel++;
             var left = ParseNamedExpr();
             if (_lexer.CurSymbol.Kind != TokenKind.PyColon)
                 throw new SyntaxError(_lexer.Position, "Missing ':' in 'while' statement!", _lexer.CurSymbol);
@@ -1208,9 +1212,12 @@ namespace PythonCoreConcept.Parser
             if (_lexer.CurSymbol.Kind == TokenKind.PyElse)
             {
                 var next = ParseElse();
+                _flowLevel--;
 
                 return new WhileStatement(startPos, _lexer.Position, symbol, left, symbol2, right, next);
             }
+
+            _flowLevel--;
             
             return new WhileStatement(startPos, _lexer.Position, symbol, left, symbol2, right, null);
         }
@@ -1220,6 +1227,7 @@ namespace PythonCoreConcept.Parser
             var startPos = _lexer.Position;
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
+            _flowLevel++;
             var left = ParseExprList();
             if (_lexer.CurSymbol.Kind != TokenKind.PyIn)
                 throw new SyntaxError(_lexer.Position, "Missing 'in' in 'for' statement!", _lexer.CurSymbol);
@@ -1241,9 +1249,12 @@ namespace PythonCoreConcept.Parser
             if (_lexer.CurSymbol.Kind == TokenKind.PyElse)
             {
                 var node = ParseElse();
+                _flowLevel--;
 
                 return new ForStatement(startPos, _lexer.Position, symbol, left, symbol2, right, symbol3, tc, next, node);
             }
+
+            _flowLevel--;
             
             return new ForStatement(startPos, _lexer.Position, symbol, left, symbol2, right, symbol3, tc, next, null);
         }
@@ -2094,6 +2105,8 @@ namespace PythonCoreConcept.Parser
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
 
+            if (_flowLevel == 0) throw new SyntaxError(_lexer.Position, "Found 'break' statement outside of flow statement!", _lexer.CurSymbol);
+
             return new BreakStatement(startPos, _lexer.Position, symbol);
         }
         
@@ -2102,6 +2115,8 @@ namespace PythonCoreConcept.Parser
             var startPos = _lexer.Position;
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
+            
+            if (_flowLevel == 0) throw new SyntaxError(_lexer.Position, "Found 'continue' statement outside of flow statement!", _lexer.CurSymbol);
 
             return new ContinueStatement(startPos, _lexer.Position, symbol);
         }
