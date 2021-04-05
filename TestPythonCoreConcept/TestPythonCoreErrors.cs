@@ -1666,5 +1666,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputImportFromMissingAfterAsError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("from . import a as\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(18u, e.Position);
+                Assert.Equal("Expecting Name literal in import statement!", e.Message);
+                Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
