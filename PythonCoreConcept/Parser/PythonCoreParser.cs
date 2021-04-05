@@ -15,11 +15,13 @@ namespace PythonCoreConcept.Parser
     {
         private PythonCoreTokenizer _lexer;
         private UInt32 _flowLevel;
+        private UInt32 _funcLevel;
         
         public PythonCoreParser(PythonCoreTokenizer tokenizer)
         {
             _lexer = tokenizer;
             _flowLevel = 0u; // While and for statement can have break and continue inside.
+            _funcLevel = 0U; // Control valid return paths. That is from func declarations.
         }
         
 #region Expression rules
@@ -1468,6 +1470,7 @@ namespace PythonCoreConcept.Parser
             var startPos = _lexer.Position;
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
+            _funcLevel++;
             if (_lexer.CurSymbol.Kind != TokenKind.Name)
                 throw new SyntaxError(_lexer.Position, "Missing Name of functiomn!", _lexer.CurSymbol);
             var symbol2 = _lexer.CurSymbol;
@@ -1493,6 +1496,8 @@ namespace PythonCoreConcept.Parser
             }
 
             var next = ParseFuncBodySuite();
+
+            _funcLevel--;
 
             return new FuncDefStatement(startPos, _lexer.Position, 
                 symbol, symbol2, left, symbol3, right, symbol4, tc, next);
@@ -2126,6 +2131,9 @@ namespace PythonCoreConcept.Parser
             var startPos = _lexer.Position;
             var symbol = _lexer.CurSymbol;
             _lexer.Advance();
+
+            if (_funcLevel == 0) throw new SyntaxError(_lexer.Position, "Found 'return' statement outside of func declaration!", _lexer.CurSymbol);
+            
             if (_lexer.CurSymbol.Kind != TokenKind.Newline && _lexer.CurSymbol.Kind != TokenKind.PySemiColon)
             {
                 var right = ParseTestListStarExpr();
