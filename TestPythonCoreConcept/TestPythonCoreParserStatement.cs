@@ -3063,5 +3063,31 @@ namespace TestPythonCoreConcept
             var node1 = node0.Nodes[0] as RaiseStatement;
             Assert.Equal(TokenKind.PyRaise, node1.Symbol1.Kind);
         }
+        
+        [Fact]
+        public void TestFileInputFuncSuiteStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("def a():\n   pass\n\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.Equal(0u, node.StartPos);
+            Assert.Equal(31u, node.EndPos);
+            Assert.True(node.Nodes.Length == 1);
+            
+        }
+        
+        [Fact]
+        public void TestFileInputCompoundSuiteStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("if a:\n   pass\n\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.Equal(0u, node.StartPos);
+            Assert.Equal(31u, node.EndPos);
+            Assert.True(node.Nodes.Length == 1);
+            
+        }
     }
 }

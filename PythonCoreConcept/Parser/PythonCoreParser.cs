@@ -1540,7 +1540,7 @@ namespace PythonCoreConcept.Parser
                     _lexer.Advance();
                 }
                 
-                if (_lexer.CurSymbol.Kind == TokenKind.Indent)
+                if (_lexer.CurSymbol.Kind != TokenKind.Indent)
                     throw new SyntaxError(_lexer.Position, "Missing indentation!", _lexer.CurSymbol);
                 var indent = _lexer.CurSymbol;
                 _lexer.Advance();
@@ -1790,7 +1790,7 @@ namespace PythonCoreConcept.Parser
                 var startPos = _lexer.Position;
                 var newline = _lexer.CurSymbol;
                 _lexer.Advance();
-                if (_lexer.CurSymbol.Kind == TokenKind.Indent)
+                if (_lexer.CurSymbol.Kind != TokenKind.Indent)
                     throw new SyntaxError(_lexer.Position, "Missing indentation!", _lexer.CurSymbol);
                 var indent = _lexer.CurSymbol;
                 _lexer.Advance();
