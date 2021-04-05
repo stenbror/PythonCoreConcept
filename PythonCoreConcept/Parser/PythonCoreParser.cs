@@ -2148,6 +2148,8 @@ namespace PythonCoreConcept.Parser
         {
             var startPos = _lexer.Position;
             var right = ParseYieldExpr();
+
+            if (_funcLevel == 0) throw new SyntaxError(_lexer.Position, "Found 'yield' outside of func declaration!", _lexer.CurSymbol);
             
             return new YieldStatement(startPos, _lexer.Position, right);
         }

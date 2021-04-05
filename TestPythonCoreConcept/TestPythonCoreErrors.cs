@@ -1771,5 +1771,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputFlowLevelYieldError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("yield 1;\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(7u, e.Position);
+                Assert.Equal("Found 'yield' outside of func declaration!", e.Message);
+                Assert.Equal(TokenKind.PySemiColon, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
