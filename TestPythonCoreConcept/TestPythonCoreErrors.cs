@@ -1687,5 +1687,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputImportFromMissingArgumentError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("from . import \n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(14u, e.Position);
+                Assert.Equal("Expecting Name literal in import statement!", e.Message);
+                Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
