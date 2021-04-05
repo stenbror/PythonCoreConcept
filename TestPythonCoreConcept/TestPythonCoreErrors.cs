@@ -1582,5 +1582,26 @@ namespace TestPythonCoreConcept
                 Assert.True(false);
             }
         }
+        
+        [Fact]
+        public void TestFileInputImportDottedNameError()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("import a.\n".ToCharArray()));
+            try
+            {
+                var rootNode = parser.ParseFileInput();
+                Assert.True(false);
+            }
+            catch (SyntaxError e)
+            {
+                Assert.Equal(9u, e.Position);
+                Assert.Equal("Expecting Name literal in dotted name statement!", e.Message);
+                Assert.Equal(TokenKind.Newline, e.Symbol.Kind);
+            }
+            catch 
+            {
+                Assert.True(false);
+            }
+        }
     }
 }
