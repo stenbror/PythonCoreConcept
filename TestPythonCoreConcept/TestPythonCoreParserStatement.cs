@@ -3047,5 +3047,19 @@ namespace TestPythonCoreConcept
             Assert.Equal(0u, node.StartPos);
             Assert.Equal(11u, node.EndPos);
         }
+        
+        [Fact]
+        public void TestFileInputRaiseStatement()
+        {
+            var parser = new PythonCoreParser(new PythonCoreTokenizer("raise Exception('SyntaxError')\n".ToCharArray()));
+            var rootNode = parser.ParseFileInput();
+            Assert.True(rootNode is FileInputNode);
+            var node = (rootNode as FileInputNode);
+            Assert.Equal(0u, node.StartPos);
+            Assert.Equal(31u, node.EndPos);
+            Assert.True(node.Nodes.Length == 1);
+            var node0 = node.Nodes[0] as RaiseStatement;
+            Assert.Equal(TokenKind.PyRaise, node0.Symbol1.Kind);
+        }
     }
 }
