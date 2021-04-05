@@ -3058,8 +3058,10 @@ namespace TestPythonCoreConcept
             Assert.Equal(0u, node.StartPos);
             Assert.Equal(31u, node.EndPos);
             Assert.True(node.Nodes.Length == 1);
-            var node0 = node.Nodes[0] as RaiseStatement;
-            Assert.Equal(TokenKind.PyRaise, node0.Symbol1.Kind);
+            var node0 = node.Nodes[0] as SimpleStatement;
+            Assert.True(node0.Nodes.Length == 1);
+            var node1 = node0.Nodes[0] as RaiseStatement;
+            Assert.Equal(TokenKind.PyRaise, node1.Symbol1.Kind);
         }
     }
 }
