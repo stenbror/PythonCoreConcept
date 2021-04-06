@@ -9,4 +9,9 @@ UnitTests for valid SyntraxError handling in progress.
 
 See UnitTest for documentation about setup of parsing of file.
 
-We now have over 390 UnitTests written and passed. There are more on the way before i have confidence in the parser doing its job corectly.
+We now have over 438 UnitTests written and passed. There are more on the way before i have confidence in the parser doing its job corectly.
+
+Suite parsing seems to work now. It will work on unlimited levels of indent. Memory will limit it eventually, but it supports more than 100
+levels that standard Python is limited to. For portability, do not exceed 100.
+
+Missing now is TypeComment UnitTests and som Trivia handling in Tokenizer. Close to first package release for parser.
