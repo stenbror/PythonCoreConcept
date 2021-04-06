@@ -213,11 +213,14 @@ _again:
                     CurSymbol = new Token(Position, _index, _reservedKeywordTable[key], new Trivia[] {});
                     return;
                 }
-                else
+                if (_sourceBuffer[_index] == '\'' || _sourceBuffer[_index] == '"')
                 {
-                    CurSymbol = new NameToken(Position, _index, new Trivia[] {}, key);
-                    return;
+                    // Check for valid prefix, or exception  TODO!
+                    goto _letterQuote;
                 }
+                
+                CurSymbol = new NameToken(Position, _index, new Trivia[] {}, key);
+                return;
             }
             
             /* Handle newline */
@@ -226,8 +229,13 @@ _again:
                 _atBol = true;
                 if (_sourceBuffer[_index] == '\r') _index++;
                 if (_sourceBuffer[_index] == '\n') _index++;
+
+                if (_sourceBuffer[_index] != '\0' &&  (isBlankline || _levelStack.Count > 0))
+                {
+                    // Handle Trivia later!
+                    goto _nextLine;
+                }
                 
-                // TODO! Check for trivia.
                 CurSymbol = new Token(Position, _index, TokenKind.Newline, new Trivia[] {});
                 return;
             }

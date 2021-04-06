@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using PythonCoreConcept.Parser.AST;
 
@@ -1546,7 +1545,14 @@ namespace PythonCoreConcept.Parser
                 _lexer.Advance();
                 var nodes = new List<StatementNode>();
                 nodes.Add(ParseStmt());
-                while (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add(ParseStmt());
+                
+                while (_lexer.CurSymbol.Kind != TokenKind.Dedent)
+                {
+                    if (_lexer.CurSymbol.Kind == TokenKind.Newline) _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add( ParseStmt() );
+                }
+                
+                //while (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add(ParseStmt());
                 var dedent = _lexer.CurSymbol;
                 _lexer.Advance();
 
@@ -1796,7 +1802,13 @@ namespace PythonCoreConcept.Parser
                 _lexer.Advance();
                 var nodes = new List<StatementNode>();
                 nodes.Add( ParseStmt() );
-                while (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add( ParseStmt() );
+                while (_lexer.CurSymbol.Kind != TokenKind.Dedent)
+                {
+                    if (_lexer.CurSymbol.Kind == TokenKind.Newline) _lexer.Advance();
+                    if (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add( ParseStmt() );
+                }
+                
+                //while (_lexer.CurSymbol.Kind != TokenKind.Dedent) nodes.Add( ParseStmt() );
                 var dedent = _lexer.CurSymbol;
                 _lexer.Advance();
 

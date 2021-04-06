@@ -102,7 +102,7 @@ namespace TestPythonCoreConcept
             var rootNode = parser.ParseFileInput();
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
-            Assert.True(node.Newlines.Length == 1);
+            Assert.True(node.Newlines.Length == 0);  // Newline not part of statement list!
             Assert.Equal(TokenKind.EndOfFile, node.Eof.Kind);
             Assert.True(node.Nodes.Length == 2);
             Assert.True(node.Nodes[0] is SimpleStatement);
@@ -3072,7 +3072,7 @@ namespace TestPythonCoreConcept
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
             Assert.Equal(0u, node.StartPos);
-            Assert.Equal(31u, node.EndPos);
+            Assert.Equal(18u, node.EndPos);
             Assert.True(node.Nodes.Length == 1);
             
         }
@@ -3085,7 +3085,7 @@ namespace TestPythonCoreConcept
             Assert.True(rootNode is FileInputNode);
             var node = (rootNode as FileInputNode);
             Assert.Equal(0u, node.StartPos);
-            Assert.Equal(31u, node.EndPos);
+            Assert.Equal(15u, node.EndPos);
             Assert.True(node.Nodes.Length == 1);
             
         }
