@@ -91,6 +91,8 @@ namespace PythonCoreConcept.Parser
         public void Advance()
         {
             bool isBlankline = false;
+
+            var triviaList = new List<Trivia>();
           
 _nextLine:
             isBlankline = false;
@@ -99,12 +101,19 @@ _nextLine:
             {
                 _atBol = false;
                 uint col = 0;
+                var triviaStart = _index;
                 while (_sourceBuffer[_index] == ' ' || _sourceBuffer[_index] == '\v' || _sourceBuffer[_index] == '\t')
                 {
                     if (_sourceBuffer[_index] == ' ') col++;
                     else if (_sourceBuffer[_index] == '\t') col = (col / TabSize + 1) * TabSize;
                     else col = 0;
                     _index++;
+                }
+
+                if (_index != triviaStart)
+                {
+                    var trivia = new Trivia(triviaStart, _index, TriviaKind.Whitespace, new string(_sourceBuffer[(int)triviaStart .. (int)_index]));
+                    triviaList.Add(trivia);
                 }
                 
                 if (_sourceBuffer[_index] == '#' || _sourceBuffer[_index] == '\r' || _sourceBuffer[_index] == '\n' ||
@@ -170,6 +179,12 @@ _again:
             {
                 _index++;
             }
+            
+            if (_index != Position)
+            {
+              var trivia = new Trivia(Position, _index, TriviaKind.Whitespace, new string(_sourceBuffer[(int)Position .. (int)_index]));
+              triviaList.Add(trivia);
+            }
 
             Position = _index;
             
@@ -187,7 +202,12 @@ _again:
                     return;
                 }
 
-                // TODO! Fix comment as trivia.
+                if (_index != Position)
+                {
+                  var trivia = new Trivia(Position, _index, TriviaKind.Comment, new string(_sourceBuffer[(int)Position .. (int)_index]));
+                  triviaList.Add(trivia);
+                }
+                
                 goto _again;
             }
             
@@ -227,12 +247,19 @@ _again:
             if (_sourceBuffer[_index] == '\r' || _sourceBuffer[_index] == '\n')
             {
                 _atBol = true;
+                var triviaStart = _index;
                 if (_sourceBuffer[_index] == '\r') _index++;
                 if (_sourceBuffer[_index] == '\n') _index++;
 
                 if (_sourceBuffer[_index] != '\0' &&  (isBlankline || _levelStack.Count > 0))
                 {
-                    // Handle Trivia later!
+                  
+                    if (_index != triviaStart)
+                    {
+                      var trivia = new Trivia(triviaStart, _index, TriviaKind.Newline, new string(_sourceBuffer[(int)triviaStart .. (int)_index]));
+                      triviaList.Add(trivia);
+                    }
+                  
                     goto _nextLine;
                 }
                 
@@ -516,20 +543,27 @@ _letterQuote:
             /* Handle Line continuation */
             if (_sourceBuffer[_index] == '\\')
             {
-                // Add Trivia
                 _index++;
+                triviaList.Add(new Trivia(_index - 1, _index, TriviaKind.LineContinuation, "\\"));
+
+                var triviaStart = _index;
+                
                 if (_sourceBuffer[_index] == '\r' || _sourceBuffer[_index] == '\n')
                 {
                     if (_sourceBuffer[_index] == '\r')
                     {
                         _index++;
-                        // Add Trivia
                     }
 
                     if (_sourceBuffer[_index] == '\n')
                     {
-                        // Add Trivia
-                        _index++;
+                      _index++;
+                    }
+                    
+                    if (_index != triviaStart)
+                    {
+                        var trivia = new Trivia(triviaStart, _index, TriviaKind.Newline, new string(_sourceBuffer[(int)triviaStart .. (int)_index]));
+                        triviaList.Add(trivia);
                     }
                     
                     goto _again;
