@@ -87,7 +87,7 @@ namespace PythonCoreConcept.Parser
             if (_sourceBuffer[_index] >= 'A' && _sourceBuffer[_index] <= 'F') return true;
             return Char.IsDigit(ch);
         }
-
+        
         public void Advance()
         {
             bool isBlankline = false;
@@ -160,12 +160,12 @@ _nextLine:
                 if (_pending < 0)
                 {
                     _pending++;
-                    CurSymbol = new Token(Position, _index, TokenKind.Dedent, null);
+                    CurSymbol = new Token(Position, _index, TokenKind.Dedent, triviaList.ToArray());
                 }
                 else
                 {
                     _pending--;
-                    CurSymbol = new Token(Position, _index, TokenKind.Indent, null);
+                    CurSymbol = new Token(Position, _index, TokenKind.Indent, triviaList.ToArray());
                 }
 
                 return;
