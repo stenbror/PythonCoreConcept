@@ -87,7 +87,7 @@ namespace PythonCoreConcept.Parser
             if (_sourceBuffer[_index] >= 'A' && _sourceBuffer[_index] <= 'F') return true;
             return Char.IsDigit(ch);
         }
-
+        
         public void Advance()
         {
             bool isBlankline = false;
@@ -160,12 +160,12 @@ _nextLine:
                 if (_pending < 0)
                 {
                     _pending++;
-                    CurSymbol = new Token(Position, _index, TokenKind.Dedent, null);
+                    CurSymbol = new Token(Position, _index, TokenKind.Dedent, triviaList.ToArray());
                 }
                 else
                 {
                     _pending--;
-                    CurSymbol = new Token(Position, _index, TokenKind.Indent, null);
+                    CurSymbol = new Token(Position, _index, TokenKind.Indent, triviaList.ToArray());
                 }
 
                 return;
@@ -198,7 +198,7 @@ _again:
 
                 if (sr.StartsWith("# type: "))
                 {
-                    CurSymbol = new TypeCommentToken(Position, _index, new Trivia[] {}, sr);
+                    CurSymbol = new TypeCommentToken(Position, _index,  triviaList.ToArray(), sr);
                     return;
                 }
 
@@ -215,7 +215,7 @@ _again:
             if (_sourceBuffer[_index] == '\0')
             {
                 // TODO: Fix interactive mode first
-                CurSymbol = new Token(Position, _index, TokenKind.EndOfFile, new Trivia[] {});
+                CurSymbol = new Token(Position, _index, TokenKind.EndOfFile, triviaList.ToArray());
                 return;
             }
             
@@ -230,7 +230,7 @@ _again:
 
                 if (_reservedKeywordTable.ContainsKey(key))
                 {
-                    CurSymbol = new Token(Position, _index, _reservedKeywordTable[key], new Trivia[] {});
+                    CurSymbol = new Token(Position, _index, _reservedKeywordTable[key], triviaList.ToArray());
                     return;
                 }
                 if (_sourceBuffer[_index] == '\'' || _sourceBuffer[_index] == '"')
@@ -239,7 +239,7 @@ _again:
                     goto _letterQuote;
                 }
                 
-                CurSymbol = new NameToken(Position, _index, new Trivia[] {}, key);
+                CurSymbol = new NameToken(Position, _index, triviaList.ToArray(), key);
                 return;
             }
             
@@ -263,7 +263,7 @@ _again:
                     goto _nextLine;
                 }
                 
-                CurSymbol = new Token(Position, _index, TokenKind.Newline, new Trivia[] {});
+                CurSymbol = new Token(Position, _index, TokenKind.Newline, triviaList.ToArray());
                 return;
             }
             
@@ -278,7 +278,7 @@ _again:
                     if (_sourceBuffer[_index] == '.')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyElipsis, new Trivia[] {});
+                        CurSymbol = new Token(Position, _index, TokenKind.PyElipsis, triviaList.ToArray());
                         return;
                     }
 
@@ -286,7 +286,7 @@ _again:
                 }
                 else if (!Char.IsDigit(_sourceBuffer[_index]))
                 {
-                    CurSymbol = new Token(Position, _index, TokenKind.PyDot, new Trivia[] {});
+                    CurSymbol = new Token(Position, _index, TokenKind.PyDot, triviaList.ToArray());
                     return;
                 }
 
@@ -488,7 +488,7 @@ _again:
                 }
                 
                 var text = new string(_sourceBuffer[(int)Position .. (int)_index]);
-                CurSymbol = new NumberToken(Position, _index, new Trivia[]{}, text);
+                CurSymbol = new NumberToken(Position, _index, triviaList.ToArray(), text);
                 return;
             }
             
@@ -536,7 +536,7 @@ _letterQuote:
                 }
 
                 var text = new string(_sourceBuffer[(int)Position .. (int)_index]);
-                CurSymbol = new StringToken(Position, _index, new Trivia[]{}, text);
+                CurSymbol = new StringToken(Position, _index, triviaList.ToArray(), text);
                 return;
             }
             
@@ -577,50 +577,50 @@ _letterQuote:
             {
                 case '(':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyLeftParen, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyLeftParen, triviaList.ToArray());
                     break;
                 case '[':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyLeftBracket, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyLeftBracket, triviaList.ToArray());
                     break;
                 case '{':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyLeftCurly, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyLeftCurly, triviaList.ToArray());
                     break;
                 case ')':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyRightParen, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyRightParen, triviaList.ToArray());
                     break;
                 case ']':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyRightBracket, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyRightBracket, triviaList.ToArray());
                     break;
                 case '}':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyRightCurly, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyRightCurly, triviaList.ToArray());
                     break;
                 case ';':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PySemiColon, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PySemiColon, triviaList.ToArray());
                     break;
                 case ',':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyComma, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyComma, triviaList.ToArray());
                     break;
                 case '~':
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyBitInvert, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyBitInvert, triviaList.ToArray());
                     break;
                 case '+':
                     _index++;
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyPlusAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyPlusAssign, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyPlus, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyPlus, triviaList.ToArray());
                     }
 
                     break;
@@ -629,16 +629,16 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyMinusAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyMinusAssign, triviaList.ToArray());
                     }
                     else if (_sourceBuffer[_index] == '>')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyArrow, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyArrow, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyMinus, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyMinus, triviaList.ToArray());
                     }
 
                     break;
@@ -647,7 +647,7 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyMulAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyMulAssign, triviaList.ToArray());
                     }
                     else if (_sourceBuffer[_index] == '*')
                     {
@@ -655,16 +655,16 @@ _letterQuote:
                         if (_sourceBuffer[_index] == '=')
                         {
                             _index++;
-                            CurSymbol = new Token(Position, _index, TokenKind.PyPowerAssign, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyPowerAssign, triviaList.ToArray());
                         }
                         else
                         {
-                            CurSymbol = new Token(Position, _index, TokenKind.PyPower, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyPower, triviaList.ToArray());
                         }
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyMul, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyMul, triviaList.ToArray());
                     }
 
                     break;
@@ -673,7 +673,7 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyDivAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyDivAssign, triviaList.ToArray());
                     }
                     else if (_sourceBuffer[_index] == '/')
                     {
@@ -681,16 +681,16 @@ _letterQuote:
                         if (_sourceBuffer[_index] == '=')
                         {
                             _index++;
-                            CurSymbol = new Token(Position, _index, TokenKind.PyFloorDivAssign, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyFloorDivAssign, triviaList.ToArray());
                         }
                         else
                         {
-                            CurSymbol = new Token(Position, _index, TokenKind.PyFloorDiv, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyFloorDiv, triviaList.ToArray());
                         }
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyDiv, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyDiv, triviaList.ToArray());
                     }
 
                     break;
@@ -699,12 +699,12 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyLessEqual, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyLessEqual, triviaList.ToArray());
                     }
                     else if (_sourceBuffer[_index] == '>')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyNotEqual, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyNotEqual, triviaList.ToArray());
                     }
                     else if (_sourceBuffer[_index] == '<')
                     {
@@ -712,16 +712,16 @@ _letterQuote:
                         if (_sourceBuffer[_index] == '=')
                         {
                             _index++;
-                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftLeftAssign, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftLeftAssign, triviaList.ToArray());
                         }
                         else
                         {
-                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftLeft, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftLeft, triviaList.ToArray());
                         }
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyLess, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyLess, triviaList.ToArray());
                     }
 
                     break;
@@ -730,7 +730,7 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyGreaterEqual, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyGreaterEqual, triviaList.ToArray());
                     }
                     else if (_sourceBuffer[_index] == '>')
                     {
@@ -738,16 +738,16 @@ _letterQuote:
                         if (_sourceBuffer[_index] == '=')
                         {
                             _index++;
-                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftRightAssign, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftRightAssign, triviaList.ToArray());
                         }
                         else
                         {
-                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftRight, new Trivia[] { });
+                            CurSymbol = new Token(Position, _index, TokenKind.PyShiftRight, triviaList.ToArray());
                         }
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyGreater, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyGreater, triviaList.ToArray());
                     }
 
                     break;
@@ -756,11 +756,11 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyModuloAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyModuloAssign, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyModulo, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyModulo, triviaList.ToArray());
                     }
 
                     break;
@@ -769,11 +769,11 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyMatriceAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyMatriceAssign, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyMatrice, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyMatrice, triviaList.ToArray());
                     }
 
                     break;
@@ -782,11 +782,11 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyBitAndAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyBitAndAssign, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyBitAnd, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyBitAnd, triviaList.ToArray());
                     }
 
                     break;
@@ -795,11 +795,11 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyBitOrAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyBitOrAssign, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyBitOr, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyBitOr, triviaList.ToArray());
                     }
 
                     break;
@@ -808,11 +808,11 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyBitXorAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyBitXorAssign, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyBitXor, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyBitXor, triviaList.ToArray());
                     }
 
                     break;
@@ -821,11 +821,11 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyColonAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyColonAssign, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyColon, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyColon, triviaList.ToArray());
                     }
 
                     break;
@@ -834,11 +834,11 @@ _letterQuote:
                     if (_sourceBuffer[_index] == '=')
                     {
                         _index++;
-                        CurSymbol = new Token(Position, _index, TokenKind.PyEqual, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyEqual, triviaList.ToArray());
                     }
                     else
                     {
-                        CurSymbol = new Token(Position, _index, TokenKind.PyAssign, new Trivia[] { });
+                        CurSymbol = new Token(Position, _index, TokenKind.PyAssign, triviaList.ToArray());
                     }
                     break;
                 case '!':
@@ -846,7 +846,7 @@ _letterQuote:
                     if (_sourceBuffer[_index] != '=')
                         throw new LexicalError(_index, "Expecting '!=' but found only '!'");
                     _index++;
-                    CurSymbol = new Token(Position, _index, TokenKind.PyNotEqual, new Trivia[] { });
+                    CurSymbol = new Token(Position, _index, TokenKind.PyNotEqual, triviaList.ToArray());
                     break;
                 default:
                     throw new LexicalError(_index, $"Found '{_sourceBuffer[_index]}' in source code!");
